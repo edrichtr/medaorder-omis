@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Chi Tiết - Mê Đá</title>
+    <link href="fonts/shopee-fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root { --bg-color: #FBF6EE; --card-bg: #FFFDF9; --primary: #3D2B1F; --accent: #C85A32; --border: #E8DFC8; --green: #2E7D32; --red: #C62828; --blue: #1565C0; --amber: #EF6C00; --zalo: #0068FF; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Shopee Text', sans-serif; background-color: var(--bg-color); color: #2B1E16; padding-bottom: 3rem; }
+        header { background-color: var(--primary); color: #FAF4EB; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { font-family: 'Shopee Display', sans-serif; font-size: 1.5rem; }
+        .btn-header { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 0.9rem;}
+        .main-content { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .filter-box { background: var(--card-bg); padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+        .filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .filter-group label { font-weight: 600; font-size: 0.9rem; color: var(--primary); }
+        .filter-group input, .filter-group select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; }
+        .btn-action { padding: 8px 16px; background-color: var(--accent); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .btn-export { background-color: var(--blue); }
+        .btn-zalo { background-color: var(--zalo); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-card h4 { font-size: 0.95rem; color: #666; margin-bottom: 10px; font-weight: 600; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; font-family: 'Shopee Display', sans-serif; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+        .card h3 { font-family: 'Shopee Display', sans-serif; color: var(--primary); margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+        th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        th { background-color: #FAF5ED; color: var(--primary); font-weight: 700;}
+        .rank-badge { display: inline-block; width: 24px; height: 24px; text-align: center; line-height: 24px; border-radius: 50%; background: #e0e0e0; font-weight: bold; font-size: 0.8rem;}
+        .rank-1 { background: #FFD700; color: #855A00; } .rank-2 { background: #E0E0E0; color: #4F4F4F; } .rank-3 { background: #CD7F32; color: #5C3A21; }
+        .excel-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
+        .excel-table th, .excel-table td { border: 1px solid #dcdcdc; padding: 8px 10px; }
+        .excel-table th { background-color: #f1f3f4; text-align: center; text-transform: uppercase; font-size: 0.8rem;}
+        .chart-container { position: relative; height: 300px; width: 100%; }
+        #errorMsg { display: none; background: #FFEBEE; color: var(--red); padding: 1rem; border-radius: 8px; text-align: center; margin-bottom: 1rem; }
+        .pdf-mode { padding: 20px !important; background: white !important; }
+        .pdf-mode .filter-box { display: none !important; }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; font-weight: bold; color: var(--accent); font-size: 1.2rem;}
+    </style>
+</head>
+<body>
+    <div id="globalLoader" class="loading-overlay">⏳ Đang tải dữ liệu từ Đám mây...</div>
+
+    <header>
+        <h1>📊 Báo Cáo & Thống Kê <span style="font-size: 0.8rem; background: var(--green); padding: 2px 6px; border-radius: 8px; color: white;">CLOUD</span></h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="nhanvien.html" class="btn-header">👨‍🍳 Quầy Bếp</a>
+            <a href="admin.html" class="btn-header">⬅ Trở về Quản Trị</a>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div id="errorMsg">Chưa có dữ liệu đơn hàng nào được ghi nhận.</div>
+
+        <div class="filter-box">
+            <div class="filter-group">
+                <label>Lọc Báo Cáo Theo:</label>
+                <select id="filterType" onchange="window.toggleFilterInputs()">
+                    <option value="all">Toàn bộ thời gian</option>
+                    <option value="day">Theo Ngày</option>
+                    <option value="month">Theo Tháng</option>
+                    <option value="year">Theo Năm</option>
+                </select>
+                <input type="date" id="filterDay" style="display:none;">
+                <input type="month" id="filterMonth" style="display:none;">
+                <select id="filterYear" style="display:none;">
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                </select>
+                <button class="btn-action" onclick="window.processReport()">Lọc Dữ Liệu</button>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-action btn-zalo" onclick="window.pushCurrentReportToZalo()">💬 Đẩy Báo Cáo Này Về Zalo</button>
+                <button class="btn-action btn-export" onclick="window.exportToPDF()">📥 Xuất Báo Cáo PDF</button>
+            </div>
+        </div>
+
+        <div id="reportContent">
+            <h2 id="reportTitle" style="text-align: center; color: var(--primary); margin-bottom: 1.5rem; font-family: 'Shopee Display', sans-serif; display: none;">BÁO CÁO HOẠT ĐỘNG KINH DOANH</h2>
+            
+            <div class="summary-grid">
+                <div class="stat-card" style="border-bottom: 4px solid var(--blue);"><h4>Doanh Thu</h4><div class="value" id="valRevenue" style="color: var(--blue);">0 đ</div></div>
+                <div class="stat-card" style="border-bottom: 4px solid var(--amber);"><h4>Chi Phí (Chung)</h4><div class="value" id="valCosts" style="color: var(--amber);">0 đ</div></div>
+                <div class="stat-card" id="profitCard" style="border-bottom: 4px solid var(--green);"><h4>Lợi Nhuận Ròng</h4><div class="value" id="valProfit" style="color: var(--green);">0 đ</div></div>
+                <div class="stat-card" style="border-bottom: 4px solid var(--primary);"><h4>Tổng Số Ly Bán</h4><div class="value" id="valTotalCups" style="color: var(--primary);">0</div></div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card"><h3>Cơ Cấu Tài Chính</h3><div class="chart-container"><canvas id="financeChart"></canvas></div></div>
+                <div class="card"><h3>Top 5 Món Bán Chạy</h3><div class="chart-container"><canvas id="salesChart"></canvas></div></div>
+            </div>
+
+            <div class="card">
+                <h3>Chi Tiết Sản Phẩm Tiêu Thụ</h3>
+                <table>
+                    <thead><tr><th style="width: 60px; text-align: center;">Top</th><th>Tên Sản Phẩm</th><th style="text-align: right;">Đã Bán</th><th style="text-align: right;">Doanh Thu Mang Lại</th></tr></thead>
+                    <tbody id="salesTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3>Dữ Liệu Bán Hàng Chi Tiết <span style="font-size: 0.75rem; font-weight: normal; color: #555; background: #eee; padding: 4px 8px; border-radius: 4px;">Dạng Bảng Kê (Excel)</span></h3>
+                <div style="overflow-x: auto;">
+                    <table class="excel-table">
+                        <thead><tr><th style="width: 50px;">STT</th><th>Ngày HĐ</th><th>Tên Sản Phẩm</th><th style="text-align: right;">SL</th><th style="text-align: right;">Đơn Giá</th><th style="text-align: right;">Doanh Thu</th></tr></thead>
+                        <tbody id="detailTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TÍCH HỢP FIREBASE -->
+    <script type="module">
+        import {
+            db,
+            readyAdmin as medaReadyAdmin,
+            callFn,
+            getOrderTimeMs,
+            getOrderDateKeyVN
+        } from "./assets/meda.js";
+        import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+        const formatMoney = (amount) => Number(amount || 0).toLocaleString('vi-VN');
+        let financeChartInstance = null; let salesChartInstance = null;
+        let globalAllOrders = [];
+        let globalInventory = [];
+        let globalProducts = [];
+        let globalZaloConfig = null;
+        let globalTotalCosts = 0;
+        let currentReportSummary = { title: '', revenue: 0, costs: 0, profit: 0, totalCups: 0, salesArray: [] };
+
+        window.toggleFilterInputs = function() {
+            const filterType = document.getElementById('filterType').value;
+            document.getElementById('filterDay').style.display = filterType === 'day' ? 'inline-block' : 'none';
+            document.getElementById('filterMonth').style.display = filterType === 'month' ? 'inline-block' : 'none';
+            document.getElementById('filterYear').style.display = filterType === 'year' ? 'inline-block' : 'none';
+        }
+
+        async function fetchCloudData() {
+            document.getElementById('globalLoader').style.display = 'flex';
+            try {
+                const [finSnap, zaloSnap, invSnap, prodSnap, ordersSnap] = await Promise.all([
+                    getDoc(doc(db, "config", "finance")),
+                    getDoc(doc(db, "config", "zalo")),
+                    getDocs(collection(db, "inventory")),
+                    getDocs(collection(db, "products")),
+                    getDocs(collection(db, "orders"))
+                ]);
+
+                if(finSnap.exists()) {
+                    let f = finSnap.data();
+                    globalTotalCosts = (f.fixedCosts || 0) + (f.ingredientCosts || 0);
+                }
+                if(zaloSnap.exists()) globalZaloConfig = zaloSnap.data();
+                globalInventory = invSnap.docs.map(d => ({ ...d.data(), id: d.data().id || d.id }));
+                globalProducts = prodSnap.docs.map(d => ({ ...d.data(), id: d.id }));
+
+                globalAllOrders = ordersSnap.docs.filter(d => !d.get("requiresReconciliation") && (!d.get("payment_status") || d.get("payment_status") === "PAID")).map(d => ({ id: d.id, ...d.data() }));
+                // Sắp xếp đơn mới nhất lên đầu theo timestamp chuẩn hóa
+                globalAllOrders.sort((a, b) => getOrderTimeMs(b) - getOrderTimeMs(a));
+
+                window.processReport();
+            } catch(e) { console.log(e); alert("Lỗi tải dữ liệu báo cáo!"); }
+            document.getElementById('globalLoader').style.display = 'none';
+        }
+
+        function filterOrders(orders, filterType) {
+            if (filterType === 'all') return orders;
+            let targetString = "";
+            if (filterType === 'day') {
+                const dateVal = document.getElementById('filterDay').value; 
+                if(!dateVal) return orders;
+                const [year, month, day] = dateVal.split('-');
+                targetString = `${day}/${month}/${year}`;
+            } 
+            else if (filterType === 'month') {
+                const monthVal = document.getElementById('filterMonth').value; 
+                if(!monthVal) return orders;
+                const [year, month] = monthVal.split('-');
+                targetString = `${month}/${year}`; 
+            } 
+            else if (filterType === 'year') { targetString = document.getElementById('filterYear').value; }
+            
+            return orders.filter(order => {
+                const normDate = getOrderDateKeyVN(order);
+                if (normDate && normDate.includes(targetString)) return true;
+                return Boolean(order.createdAt && String(order.createdAt).includes(targetString));
+            });
+        }
+
+        window.processReport = function() {
+            const filterType = document.getElementById('filterType').value;
+            let filteredOrders = filterOrders(globalAllOrders, filterType);
+
+            if (globalAllOrders.length === 0) document.getElementById('errorMsg').style.display = 'block';
+            else document.getElementById('errorMsg').style.display = 'none';
+
+            let filteredRevenue = 0; let productStats = {}; let totalCups = 0;
+
+            filteredOrders.forEach(order => {
+                filteredRevenue += Number(order.total || 0);
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        const key = item.id || item.name;
+                        if (!productStats[key]) productStats[key] = { name: item.name, quantity: 0, revenue: 0 };
+                        const qty = Number(item.quantity || 0);
+                        const price = Number(item.price || 0);
+                        productStats[key].quantity += qty;
+                        productStats[key].revenue += (price * qty);
+                        totalCups += qty;
+                    });
+                }
+            });
+
+            let profit = filteredRevenue - globalTotalCosts;
+
+            document.getElementById('valRevenue').innerText = formatMoney(filteredRevenue) + " đ";
+            document.getElementById('valCosts').innerText = formatMoney(globalTotalCosts) + " đ";
+            document.getElementById('valProfit').innerText = formatMoney(profit) + " đ";
+            document.getElementById('valProfit').style.color = profit < 0 ? 'var(--red)' : 'var(--green)';
+            document.getElementById('profitCard').style.borderBottomColor = profit < 0 ? 'var(--red)' : 'var(--green)';
+            document.getElementById('valTotalCups').innerText = totalCups + " ly";
+
+            let salesArray = Object.values(productStats).sort((a, b) => b.quantity - a.quantity);
+            renderSalesTable(salesArray);
+            renderDetailTable(filteredOrders);
+            drawCharts(filteredRevenue, globalTotalCosts, profit, salesArray);
+
+            let pdfTitle = "BÁO CÁO HOẠT ĐỘNG KINH DOANH";
+            if (filterType === 'day') pdfTitle += " NGÀY " + document.getElementById('filterDay').value;
+            if (filterType === 'month') pdfTitle += " THÁNG " + document.getElementById('filterMonth').value;
+            if (filterType === 'year') pdfTitle += " NĂM " + document.getElementById('filterYear').value;
+            document.getElementById('reportTitle').innerText = pdfTitle;
+
+            currentReportSummary = { title: pdfTitle, revenue: filteredRevenue, costs: globalTotalCosts, profit, totalCups, salesArray };
+        }
+
+        // Đẩy báo cáo đang xem trên màn hình về Zalo qua Cloud Function
+        window.pushCurrentReportToZalo = async function() {
+            const outIngs = globalInventory.filter(i => i.quantity <= 0).map(i => `❌ ${i.name} (0 ${i.unit})`);
+            const outProds = [];
+            globalProducts.forEach(p => {
+                let maxCups = Infinity;
+                if (!p.recipe || p.recipe.length === 0) maxCups = 999;
+                else {
+                    p.recipe.forEach(ri => {
+                        const inv = globalInventory.find(i => i.id === ri.ingId);
+                        if (!inv || inv.quantity < ri.amount) maxCups = 0;
+                        else maxCups = Math.min(maxCups, Math.floor(inv.quantity / ri.amount));
+                    });
+                }
+                if (maxCups === 0 || maxCups === Infinity) outProds.push(`🚫 ${p.name} (Hết món)`);
+            });
+
+            const salesLines = currentReportSummary.salesArray.length > 0
+                ? currentReportSummary.salesArray.map((s, idx) => `${idx + 1}. ${s.name}: ${s.quantity} ly (${formatMoney(s.revenue)} VNĐ)`).join('\n')
+                : '- Chưa có sản phẩm nào bán ra trong kỳ này.';
+
+            const msg = [
+                `📊 [MÊ ĐÁ] ${currentReportSummary.title}`,
+                `🕒 Xuất lúc: ${new Date().toLocaleString('vi-VN')}`,
+                `========================`,
+                `💰 1. SỐ TIỀN CHI TIẾT:`,
+                `• Tổng doanh thu: ${formatMoney(currentReportSummary.revenue)} VNĐ`,
+                `• Tổng chi phí: ${formatMoney(currentReportSummary.costs)} VNĐ`,
+                `• Lợi nhuận ròng: ${formatMoney(currentReportSummary.profit)} VNĐ`,
+                `• Tổng số ly đã bán: ${currentReportSummary.totalCups} ly`,
+                `========================`,
+                `🧋 2. CHI TIẾT BÁN ĐƯỢC NHỮNG GÌ:`,
+                salesLines,
+                `========================`,
+                `⚠️ 3. TÌNH TRẠNG HẾT NGUYÊN LIỆU & HẾT MÓN:`,
+                (outIngs.length === 0 && outProds.length === 0)
+                    ? `✅ Tất cả nguyên liệu và món đều còn đủ.`
+                    : [...outIngs, ...outProds].join('\n')
+            ].join('\n');
+
+            navigator.clipboard.writeText(msg).catch(() => {});
+
+            document.getElementById('globalLoader').style.display = 'flex';
+            try {
+                const res = await callFn('zaloPushReport', { message: msg, text: msg, data: currentReportSummary });
+                document.getElementById('globalLoader').style.display = 'none';
+                if (res && res.ok) {
+                    alert("✅ Đã đẩy trực tiếp Báo cáo chi tiết về Zalo thành công!");
+                } else {
+                    alert("📋 Đã sao chép báo cáo vào bộ nhớ tạm!\n" + (res && res.reason ? "Lưu ý: " + res.reason : "Bạn có thể dán gửi vào Zalo."));
+                }
+            } catch (e) {
+                document.getElementById('globalLoader').style.display = 'none';
+                if (globalZaloConfig && globalZaloConfig.mode === 'webhook' && globalZaloConfig.webhookUrl) {
+                    try {
+                        await fetch(globalZaloConfig.webhookUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                shop: "Mê Đá",
+                                type: "detailed_report",
+                                message: msg,
+                                text: msg,
+                                content: msg,
+                                data: currentReportSummary
+                            })
+                        });
+                        alert("✅ Đã đẩy trực tiếp Báo cáo chi tiết về Webhook Zalo thành công!");
+                        return;
+                    } catch (_) {}
+                }
+                alert("📋 Đã sao chép toàn bộ Báo cáo vào bộ nhớ tạm! Bạn có thể dán (Ctrl+V) gửi qua Zalo.");
+                const phone = (globalZaloConfig && globalZaloConfig.phone) ? globalZaloConfig.phone.replace(/[^0-9]/g, '') : '';
+                window.open(phone ? `https://zalo.me/${phone}` : `https://chat.zalo.me/`, '_blank');
+            }
+        }
+
+        function renderSalesTable(salesArray) {
+            const tbody = document.getElementById('salesTableBody');
+            if (salesArray.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#888;">Không có dữ liệu.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = salesArray.map((item, index) => {
+                let rClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+                return `<tr><td style="text-align:center;"><span class="rank-badge ${rClass}">${index + 1}</span></td>
+                <td><strong>${item.name}</strong></td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right; color:var(--green);">${formatMoney(item.revenue)} đ</td></tr>`;
+            }).join('');
+        }
+
+        function renderDetailTable(filteredOrders) {
+            const tbody = document.getElementById('detailTableBody');
+            if (filteredOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Không có dữ liệu chi tiết.</td></tr>';
+                return;
+            }
+            const rows = [];
+            let stt = 1;
+            filteredOrders.forEach(order => {
+                const dateText = order.createdAt || getOrderDateKeyVN(order) || '';
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        rows.push(`<tr><td style="text-align:center;">${stt++}</td><td style="text-align:center;">${dateText}</td>
+                        <td><strong>${item.name}</strong></td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">${formatMoney(item.price)}</td>
+                        <td style="text-align:right; color:var(--green); font-weight:bold;">${formatMoney(item.price * item.quantity)}</td></tr>`);
+                    });
+                }
+            });
+            tbody.innerHTML = rows.join('');
+        }
+
+        function drawCharts(revenue, costs, profit, salesArray) {
+            if (financeChartInstance) financeChartInstance.destroy();
+            if (salesChartInstance) salesChartInstance.destroy();
+
+            financeChartInstance = new Chart(document.getElementById('financeChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['Chi phí Tổng', 'Lợi Nhuận'], datasets: [{ data: [costs, profit > 0 ? profit : 0], backgroundColor: ['#C62828', '#2E7D32'] }] },
+                options: { responsive: true, maintainAspectRatio: false, animation: false }
+            });
+
+            let top5 = salesArray.slice(0, 5);
+            salesChartInstance = new Chart(document.getElementById('salesChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: top5.map(i => i.name), datasets: [{ label: 'Số lượng đã bán', data: top5.map(i => i.quantity), backgroundColor: '#C85A32', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        window.exportToPDF = function() {
+            const element = document.getElementById('reportContent'); const title = document.getElementById('reportTitle');
+            title.style.display = 'block'; element.classList.add('pdf-mode');
+            html2pdf().set({
+                margin: [10, 10, 10, 10], filename: 'Bao_Cao_Me_Da.pdf', image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(element).save().then(() => { title.style.display = 'none'; element.classList.remove('pdf-mode'); });
+        }
+
+        const today = new Date();
+        document.getElementById('filterMonth').value = today.getFullYear() + '-' + (today.getMonth() + 1).toString().padStart(2, '0');
+        document.getElementById('filterType').value = 'month';
+        window.toggleFilterInputs();
+
+        // Kiểm tra quyền quản trị trước khi tải dữ liệu báo cáo
+        (async function guardReport() {
+            try {
+                await medaReadyAdmin();
+                await fetchCloudData();
+            } catch (e) {
+                window.location.href = 'admin.html';
+            }
+        })();
+    </script>
+</body>
+</html>

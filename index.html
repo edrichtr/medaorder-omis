@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mê Đá - Chữa lành giữa chốn xô bồ</title>
+    <link href="logo.jpg" rel="icon" type="image/x-icon">
+    <!-- Phông chữ: Shopee Display & Shopee Text -->
+    <link href="fonts/shopee-fonts.css" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg-color: #F8F5F0; 
+            --card-bg: #FFFFFF; 
+            --primary: #30231D; 
+            --accent: #C85A32; 
+            --accent-hover: #A0401D; 
+            --text-main: #30231D; 
+            --text-muted: #7A6B62; 
+            --border: #E8DFC8; 
+            --green: #2E7D32; 
+            --red: #C62828; 
+            
+            --font-heading: 'Shopee Display', sans-serif;
+            --font-body: 'Shopee Text', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-body); background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; overflow-x: hidden; position: relative;}
+
+        /* --- 1. HIỆU ỨNG MÔI TRƯỜNG (NOISE & LÁ RƠI) --- */
+        .film-grain {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .falling-leaves { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .leaf { position: absolute; width: 12px; height: 12px; background-color: rgba(122, 107, 98, 0.3); border-radius: 0 100% 0 100%; animation: falling linear infinite; }
+        @keyframes falling { 0% { transform: translate(0, -10vh) rotate(0deg); opacity: 1; } 100% { transform: translate(150px, 110vh) rotate(360deg); opacity: 0; } }
+
+        /* --- SÓNG BIỂN CUỘN --- */
+        .ocean-waves {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 15vh;
+            min-height: 100px;
+            max-height: 150px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .waves-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+        }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+        @keyframes move-forever {
+            0% { transform: translate3d(-90px,0,0); }
+            100% { transform: translate3d(85px,0,0); }
+        }
+
+        /* --- SINH VẬT BAY: RỒNG VÀ CHIM LẠC --- */
+        .mythical-creature {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.9;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+        }
+        .dragon-3d {
+            top: 15%;
+            left: -300px;
+            width: 250px;
+            animation: flyRight 35s linear infinite;
+        }
+        .chimlac-3d {
+            top: 8%;
+            right: -200px;
+            width: 150px;
+            animation: flyLeft 25s linear infinite 10s;
+        }
+        @keyframes flyRight {
+            0% { transform: translateX(0) translateY(0) rotate(5deg) scaleX(-1); }
+            25% { transform: translateX(35vw) translateY(-20px) rotate(0deg) scaleX(-1); }
+            50% { transform: translateX(70vw) translateY(10px) rotate(5deg) scaleX(-1); }
+            100% { transform: translateX(120vw) translateY(-30px) rotate(-5deg) scaleX(-1); }
+        }
+        @keyframes flyLeft {
+            0% { transform: translateX(0) translateY(0) rotate(-5deg); }
+            25% { transform: translateX(-35vw) translateY(20px) rotate(0deg); }
+            50% { transform: translateX(-70vw) translateY(-10px) rotate(-5deg); }
+            100% { transform: translateX(-120vw) translateY(30px) rotate(5deg); }
+        }
+
+        /* --- 2. TOP NAVIGATION --- */
+        .top-nav {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+        }
+        .nav-brand { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: #f6f9d0; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: inline-block; }
+        .nav-links { display: flex; gap: 15px; }
+        .nav-link { 
+            color: #FFF; text-decoration: none; font-size: 0.9rem; font-weight: 600; 
+            background: rgba(0,0,0,0.4); padding: 8px 18px; border-radius: 30px; 
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); transition: 0.3s;
+        }
+        .nav-link:hover { background: var(--accent); border-color: var(--accent); }
+
+        /* --- 3. HERO BANNER - background.png --- */
+        .hero-banner {
+            position: relative; height: 70vh; min-height: 450px;
+            background-image: url('background.png'); 
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(48, 35, 29, 0.2), rgba(48, 35, 29, 0.85)); z-index: 1; }
+        
+        .hero-content { position: relative; z-index: 2; color: #FFF; display: flex; flex-direction: column; align-items: center;}
+        .hero-logo { width: 130px; height: 130px; object-fit: cover; border-radius: 50%; border: 4px solid rgba(255,255,255,0.9); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); background-color: var(--card-bg); }
+        .hero-content h1 { font-family: var(--font-heading); font-size: 3.5rem; letter-spacing: 2px; margin-bottom: 15px; color: #f6f9d0; text-shadow: 2px 4px 10px rgba(0,0,0,0.5); display: inline-block; padding: 0 8px;}
+        .hero-content p { font-size: 1.2rem; color: #E8DFC8; font-style: italic; letter-spacing: 1px; font-family: var(--font-heading); display: inline-block; padding: 0 6px;}
+
+        /* --- 4. ANNOUNCEMENT BAR & MODULE SỰ KIỆN ĐẶC BIỆT (INJECTED TỪ SUKIEN.HTML) --- */
+        #dynamicEventBanner {
+            background-color: var(--accent); color: #FFFFFF; padding: 12px 24px;
+            display: none; justify-content: center; align-items: center; gap: 15px;
+            box-shadow: 0 4px 14px rgba(48, 35, 29, 0.16); position: relative; z-index: 5;
+        }
+        .event-content { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;}
+        .event-content h3 { color: inherit; font-family: var(--font-body); font-size: 1rem; font-weight: 800; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 8px;}
+        .event-badge { background: #FFF; color: var(--accent); padding: 3px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 800; animation: pulseBadge 2s infinite; }
+        @keyframes pulseBadge { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); } 70% { box-shadow: 0 0 0 6px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+        .event-content p { font-size: 0.95rem; font-weight: 500; margin: 0; opacity: 0.95; }
+        .event-banner-cta {
+            background: rgba(255,255,255,0.22); color: inherit; border: 1px solid rgba(255,255,255,0.45);
+            padding: 5px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; text-decoration: none; transition: 0.2s;
+        }
+        .event-banner-cta:hover { background: rgba(255,255,255,0.35); transform: translateY(-1px); }
+
+        /* KHU VỰC SỰ KIỆN ĐẶC BIỆT (SPOTLIGHT SECTION) */
+        #specialEventSection {
+            display: none; max-width: 1300px; margin: 2.8rem auto 0; padding: 0 1.5rem;
+            position: relative; z-index: 4;
+        }
+        .event-spotlight-card {
+            border-radius: 24px; padding: 2.4rem; color: #FFF;
+            position: relative; overflow: hidden;
+            box-shadow: 0 18px 42px rgba(48, 35, 29, 0.16);
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        .event-spotlight-card::before {
+            content: ''; position: absolute; top: -80px; right: -80px;
+            width: 280px; height: 280px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+        .theme-warm-terracotta { background: linear-gradient(135deg, #30231D 0%, #7C361D 52%, #C85A32 100%); }
+        .theme-forest-healing { background: linear-gradient(135deg, #14281D 0%, #244F38 52%, #3B7A57 100%); }
+        .theme-royal-gold { background: linear-gradient(135deg, #2A1C11 0%, #6B471B 52%, #B8860B 100%); }
+        .theme-festive-crimson { background: linear-gradient(135deg, #430D15 0%, #861B26 52%, #C62828 100%); }
+        .theme-night-acoustic { background: linear-gradient(135deg, #121626 0%, #262E4D 52%, #455078 100%); }
+
+        .ev-spotlight-grid {
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem; align-items: center;
+        }
+        .ev-spotlight-grid.no-image {
+            grid-template-columns: 1fr;
+        }
+        .ev-tag-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+        .ev-tag-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.16); backdrop-filter: blur(6px);
+            padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.25); letter-spacing: 0.5px;
+        }
+        .ev-offer-pill {
+            background: #FFD54F; color: #30231D; padding: 5px 14px;
+            border-radius: 999px; font-size: 0.78rem; font-weight: 800;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+        }
+        .ev-main-title {
+            font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700;
+            line-height: 1.28; margin-bottom: 12px; color: #FFF9EB;
+        }
+        .ev-main-subtitle {
+            font-size: 1rem; line-height: 1.65; color: rgba(255,255,255,0.9);
+            margin-bottom: 18px; max-width: 760px;
+        }
+        .ev-meta-bar {
+            display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 18px;
+        }
+        .ev-voucher-box {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(0,0,0,0.3); border: 1.5px dashed rgba(255,213,79,0.75);
+            padding: 8px 16px; border-radius: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .ev-voucher-box:hover { background: rgba(0,0,0,0.42); transform: translateY(-1px); }
+        .ev-voucher-code { font-size: 1.05rem; font-weight: 800; color: #FFD54F; letter-spacing: 1.2px; }
+        .ev-voucher-copy-btn {
+            background: #FFF; color: var(--primary); padding: 3px 10px;
+            border-radius: 6px; font-size: 0.74rem; font-weight: 800;
+        }
+        .ev-countdown-row { display: inline-flex; gap: 8px; align-items: center; }
+        .ev-cd-item {
+            background: rgba(0,0,0,0.34); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; padding: 6px 12px; text-align: center; min-width: 58px;
+        }
+        .ev-cd-item strong { display: block; font-size: 1.15rem; font-weight: 800; color: #FFD54F; line-height: 1.1; }
+        .ev-cd-item span { font-size: 0.68rem; text-transform: uppercase; opacity: 0.85; }
+
+        .ev-perks-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px; margin-top: 16px;
+        }
+        .ev-perk-item {
+            background: rgba(255,255,255,0.11); border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 14px; padding: 12px 14px; backdrop-filter: blur(4px);
+        }
+        .ev-perk-item strong { display: block; font-size: 0.9rem; color: #FFE082; margin-bottom: 4px; }
+        .ev-perk-item span { font-size: 0.82rem; color: rgba(255,255,255,0.88); line-height: 1.4; display: block; }
+
+        .ev-poster-wrap img {
+            width: 100%; max-height: 340px; object-fit: cover;
+            border-radius: 18px; border: 3px solid rgba(255,255,255,0.28);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.3);
+        }
+
+        .ev-featured-block {
+            margin-top: 22px; padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,0.18);
+        }
+        .ev-featured-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px; margin-bottom: 12px;
+        }
+        .ev-featured-header h4 {
+            font-family: var(--font-heading); font-size: 1.08rem; color: #FFE082;
+        }
+        .ev-featured-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 12px;
+        }
+        .ev-feat-card {
+            background: rgba(255,255,255,0.96); color: var(--primary);
+            border-radius: 14px; padding: 10px 12px;
+            display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .ev-feat-card:hover { transform: translateY(-3px); }
+        .ev-feat-card img {
+            width: 58px; height: 58px; border-radius: 10px; object-fit: cover; flex-shrink: 0;
+        }
+        .ev-feat-info { flex: 1; min-width: 0; }
+        .ev-feat-info strong {
+            display: block; font-family: var(--font-heading); font-size: 0.9rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .ev-feat-info .ev-feat-price { color: var(--accent); font-weight: 800; font-size: 0.86rem; }
+        .ev-feat-btn {
+            background: var(--accent); color: #FFF; border: none;
+            padding: 7px 11px; border-radius: 8px; font-weight: 700;
+            font-size: 0.76rem; cursor: pointer; white-space: nowrap; transition: 0.2s;
+        }
+        .ev-feat-btn:hover:not(:disabled) { background: var(--accent-hover); }
+        .ev-feat-btn:disabled { background: #D3C9C1; cursor: not-allowed; }
+
+        .ev-cta-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #FFFFFF; color: var(--primary);
+            font-weight: 800; font-size: 0.92rem; padding: 12px 24px;
+            border-radius: 999px; border: none; cursor: pointer;
+            margin-top: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+            transition: all 0.2s ease; text-decoration: none;
+        }
+        .ev-cta-btn:hover { transform: translateY(-2px); background: #FFF8E1; }
+
+        /* POPUP CHÀO MỪNG SỰ KIỆN (WELCOME MODAL) */
+        #eventPopupOverlay {
+            position: fixed; inset: 0; background: rgba(30, 20, 15, 0.72);
+            backdrop-filter: blur(4px); z-index: 10005;
+            display: none; justify-content: center; align-items: center; padding: 1.2rem;
+        }
+        .event-popup-modal {
+            background: var(--card-bg); border-radius: 22px; max-width: 460px; width: 100%;
+            overflow: hidden; box-shadow: 0 25px 65px rgba(0,0,0,0.45);
+            border: 2px solid var(--border); text-align: center; position: relative;
+            animation: eventPopupZoom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes eventPopupZoom {
+            from { transform: scale(0.86) translateY(15px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .event-popup-close {
+            position: absolute; top: 12px; right: 12px; width: 34px; height: 34px;
+            border-radius: 50%; border: none; background: rgba(0,0,0,0.55);
+            color: #FFF; font-size: 1rem; font-weight: 700; cursor: pointer; z-index: 2;
+        }
+        .ambient-emoji {
+            position: absolute; pointer-events: none; user-select: none;
+            font-size: 16px; animation: falling linear infinite;
+        }
+
+        /* --- 5. MASCOT CỤ RÙA (BÒ TRÊN MỌI VIỀN CHỮ, LOGO, KHUNG ẢNH - KHÔNG CẦN ĐI THEO CUỘN TRANG) --- */
+        /* QUAN TRỌNG: position: absolute giúp rùa gắn vào tọa độ trang web (không đi theo màn hình cuộn)
+           và có thể bò ra ngoài màn hình tự nhiên */
+        #roamingTurtle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            width: 90px;
+            height: 90px;
+            will-change: transform;
+            z-index: 9998;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: auto;
+        }
+        #roamingTurtle:active {
+            cursor: grabbing;
+        }
+
+        /* Bóng đổ dưới chân khi đi trên mặt ngang */
+        .turtle-ground-shadow {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            width: 56px;
+            height: 11px;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0) 75%);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        #turtleRotator {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.25s ease-in-out;
+        }
+
+        .turtle-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            transform-origin: 50% 80%;
+            filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.3));
+        }
+
+        /* 1. Trạng thái BÒ NGANG (Trên viền chữ, trên logo, trên viền ảnh sản phẩm) */
+        #roamingTurtle.state-walk .turtle-img {
+            animation: petWalkWaddle 0.42s cubic-bezier(0.36, 0, 0.66, -0.56) infinite alternate;
+        }
+        /* 2. Trạng thái BÒ XUỐNG / LEO DỌC (Thay vì nhảy, rùa rướn người bò xuống hoặc leo lên) */
+        #roamingTurtle.state-climb .turtle-img {
+            transform-origin: 50% 50%;
+            animation: petCrawlVertical 0.34s ease-in-out infinite alternate;
+        }
+        /* 3. Trạng thái ĐỨNG NGHỈ NGÓ NGHIÊNG (Idle) */
+        #roamingTurtle.state-idle .turtle-img {
+            animation: petIdleBreathe 1.1s ease-in-out infinite alternate;
+        }
+        /* 4. Trạng thái BỊ KÉO CHUỘT (Dragging) */
+        #roamingTurtle.state-drag .turtle-img {
+            animation: petStruggle 0.14s ease-in-out infinite alternate;
+        }
+
+        @keyframes petWalkWaddle {
+            0% {
+                transform: translateY(0px) rotate(-5deg) scaleX(1.05) scaleY(0.94);
+            }
+            100% {
+                transform: translateY(-7px) rotate(5deg) scaleX(0.95) scaleY(1.06);
+            }
+        }
+        /* Hiệu ứng bò xuống / bò lên nhịp nhàng từng bước chân */
+        @keyframes petCrawlVertical {
+            0% {
+                transform: translateX(-3px) rotate(-6deg) scaleX(1.07) scaleY(0.93);
+            }
+            100% {
+                transform: translateX(3px) rotate(6deg) scaleX(0.93) scaleY(1.07);
+            }
+        }
+        @keyframes petIdleBreathe {
+            0% {
+                transform: translateY(0px) scaleX(1.03) scaleY(0.97);
+            }
+            100% {
+                transform: translateY(-3px) scaleX(0.98) scaleY(1.03);
+            }
+        }
+        @keyframes petStruggle {
+            0% {
+                transform: translateY(-5px) rotate(-12deg) scale(1.05);
+            }
+            100% {
+                transform: translateY(-2px) rotate(12deg) scale(1.05);
+            }
+        }
+
+        /* Bong bóng thoại */
+        .turtle-tooltip {
+            position: absolute;
+            top: -46px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: #FFFFFF;
+            border: 2.5px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 13px;
+            border-radius: 18px;
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+            z-index: 20;
+            pointer-events: none;
+        }
+        .turtle-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 9px 8px 0;
+            border-style: solid;
+            border-color: var(--primary) transparent transparent transparent;
+        }
+        .turtle-tooltip.show,
+        #roamingTurtle:hover .turtle-tooltip {
+            opacity: 1;
+            visibility: visible;
+            top: -56px;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Hạt hiệu ứng dấu chân bám trên trang (position: absolute theo tài liệu) */
+        .pet-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 9997;
+            font-size: 12px;
+            animation: particleFadeUp 0.7s ease-out forwards;
+        }
+        @keyframes particleFadeUp {
+            0% { opacity: 0.8; transform: translate(0, 0) scale(0.6); }
+            100% { opacity: 0; transform: translate(var(--dx, -6px), -18px) scale(1.15); }
+        }
+
+        /* --- 6. MAIN CONTAINER & PRODUCT GRID --- */
+        .container { max-width: 1300px; margin: 4rem auto 5rem; padding: 0 1.5rem; position: relative; z-index: 2;}
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .menu-title { font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary); display: inline-block; position: relative; padding-bottom: 10px; }
+        .menu-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background-color: var(--accent); border-radius: 2px; }
+        
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        
+        /* PRODUCT CARD */
+        .product-card { background: var(--card-bg); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(48, 35, 29, 0.04); border: 1px solid rgba(232, 223, 200, 0.5); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 12px 24px rgba(48, 35, 29, 0.1); border-color: var(--border); }
+        .product-img-wrapper { width: 100%; height: 220px; overflow: hidden; background-color: #F4EFEB; display: flex; justify-content: center; align-items: center; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; mix-blend-mode: multiply; }
+        .product-card:hover .product-img { transform: scale(1.05); }
+        
+        .product-info { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-name { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: inline-block; }
+        .product-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; font-style: italic; line-height: 1.5; flex-grow: 1; }
+        .product-price { font-weight: 700; color: var(--accent); font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .stock-tag { font-size: 0.8rem; font-weight: 600; margin-bottom: 1.2rem; display: inline-block; padding: 4px 10px; border-radius: 6px; background: #F8F5F0;}
+        .stock-available { color: var(--green); }
+        .stock-out { color: var(--red); background: #FFEBEE; }
+        
+        .btn-add { margin-top: auto; width: 100%; padding: 14px 10px; background-color: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+        .btn-add:hover:not(:disabled) { background-color: var(--accent); box-shadow: 0 4px 10px rgba(200, 90, 50, 0.3); }
+        .btn-add:disabled { background-color: #E0D8D0; color: #A09388; cursor: not-allowed; }
+
+        /* --- 7. GIỎ HÀNG NGĂN KÉO & ICON NỔI --- */
+        .floating-cart-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background-color: var(--accent); color: white; border: none; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 6px 20px rgba(200, 90, 50, 0.4); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: transform 0.2s; }
+        .floating-cart-btn:hover { transform: scale(1.1); background-color: var(--accent-hover); }
+        .cart-badge { position: absolute; top: 0; right: 0; background: var(--red); color: white; font-size: 0.8rem; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid #FFF; }
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(48, 35, 29, 0.6); backdrop-filter: blur(2px); z-index: 10000; display: none; opacity: 0; transition: opacity 0.3s; }
+        .cart-overlay.active { display: block; opacity: 1; }
+        .cart-sidebar { position: fixed; top: 0; right: -450px; width: 400px; max-width: 100%; height: 100vh; background: var(--bg-color); z-index: 10001; box-shadow: -5px 0 25px rgba(0,0,0,0.15); transition: right 0.3s ease-in-out; display: flex; flex-direction: column; }
+        .cart-sidebar.open { right: 0; }
+        .cart-header { padding: 1.5rem; background: #FFF; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .cart-header h3 { font-family: var(--font-heading); color: var(--primary); font-size: 1.3rem; margin: 0;}
+        .close-cart-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        .cart-body { padding: 1.5rem; flex-grow: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #FFF; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .cart-item-info h4 { font-size: 1rem; color: var(--primary); font-family: var(--font-heading); margin-bottom: 4px;}
+        .cart-item-info span { font-size: 0.9rem; color: var(--accent); font-weight: 600;}
+        .cart-item-qty { display: flex; align-items: center; gap: 10px; background: var(--bg-color); padding: 4px; border-radius: 20px;}
+        .btn-qty { width: 28px; height: 28px; border-radius: 50%; border: none; background: #FFF; cursor: pointer; font-weight: bold; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .customer-info-box { background: #FFF; padding: 15px; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border); }
+        .customer-info-box label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-top: 10px; margin-bottom: 5px; }
+        .customer-info-box input, .customer-info-box select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #DCD1C4; font-family: inherit; font-size: 0.95rem; background: var(--bg-color);}
+        .customer-info-box input:focus { outline: 2px solid var(--accent); border-color: transparent;}
+        .btn-qty:disabled { color: var(--text-muted); opacity: .45; cursor: not-allowed; }
+        #cartStockNotice { background: #FFF3E0; color: #B45309; border: 1px solid #FDE68A; border-radius: 10px; padding: 10px 12px; font-size: 0.84rem; font-weight: 600; margin-bottom: 12px; }
+        #cartStockNotice:empty { display: none; }
+        .cart-item-stock-hint { display: block; font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
+        .cart-footer { padding: 1.5rem; background: #FFF; border-top: 1px solid var(--border); box-shadow: 0 -4px 15px rgba(0,0,0,0.02);}
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem; }
+        .btn-checkout { width: 100%; padding: 16px; background-color: var(--accent); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(200, 90, 50, 0.2);}
+        .btn-checkout:hover:not(:disabled) { background-color: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200, 90, 50, 0.3);}
+        .btn-checkout:disabled { background-color: #D3C9C1; box-shadow: none; cursor: not-allowed; }
+        .empty-cart-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; font-style: italic; }
+
+        @media (max-width: 768px) {
+            .top-nav { padding: 1rem; flex-direction: column; gap: 10px;}
+            .hero-content h1 { font-size: 2.5rem; }
+            .cart-sidebar { width: 100%; right: -100%; }
+            .ev-spotlight-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+            .event-spotlight-card { padding: 1.5rem 1.25rem; }
+            .ev-main-title { font-size: 1.55rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HIỆU ỨNG MÔI TRƯỜNG: Noise Film & Lá Rơi / Hiệu Ứng Mùa -->
+    <div class="film-grain"></div>
+    <div class="falling-leaves" id="leavesContainer"></div>
+
+    <!-- RỒNG & CHIM LẠC BAY NGANG TRỜI -->
+    <img src="rong-3d.gif" alt="Rồng thần" class="mythical-creature dragon-3d" onerror="this.style.display='none'">
+    <img src="chimlac-3d.gif" alt="Chim Lạc" class="mythical-creature chimlac-3d" onerror="this.style.display='none'">
+
+    <!-- 1. Thanh điều hướng -->
+    <nav class="top-nav">
+        <div class="nav-brand">MÊ ĐÁ</div>
+        <div class="nav-links">
+            <a href="nhanvien.html" class="nav-link">👨‍🍳 Quầy Bếp</a>
+            <a href="admin.html" class="nav-link">⚙️ Quản Trị</a>
+        </div>
+    </nav>
+
+    <!-- 2. Parallax Hero Banner -->
+    <section class="hero-banner">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <img src="logo.jpg" alt="Mê Đá Logo" class="hero-logo" onerror="this.src='https://via.placeholder.com/130?text=Mê+Đá'">
+            <h1>MÊ ĐÁ</h1>
+            <p>Healing giữa thế giới xô bồ</p>
+        </div>
+    </section>
+
+    <!-- Thanh thông báo ngang (Được quản lý trong Studio Sự Kiện của trang quản trị) -->
+    <div id="dynamicEventBanner">
+        <div class="event-content">
+            <h3><span class="event-badge" id="evBadgeRender">HOT</span> <span id="evTitleRender">Sự Kiện</span></h3>
+            <p id="evDescRender">Nội dung</p>
+            <a href="#specialEventSection" id="evBannerCtaBtn" class="event-banner-cta" onclick="window.scrollToEventOrMenu(event)" style="display:none;">Khám phá ngay ↓</a>
+        </div>
+    </div>
+
+    <!-- 3. Mascot Cụ Rùa (Bò trên viền chữ, trên logo, khung ảnh, bò xuống & bò ra ngoài màn hình) -->
+    <div class="turtle-wrapper state-walk" id="roamingTurtle">
+        <div class="turtle-tooltip" id="turtleTooltip">Chậm lại một chút... Thưởng thức Mê Đá 🐢</div>
+        <div class="turtle-ground-shadow" id="turtleShadow"></div>
+        <div class="turtle-rotator" id="turtleRotator">
+            <img src="rua-3d.gif" alt="Rùa 3D" class="turtle-img" id="turtleImg">
+        </div>
+    </div>
+
+    <!-- KHU VỰC SỰ KIỆN ĐẶC BIỆT (INJECTED TỪ SUKIEN.HTML) -->
+    <section id="specialEventSection">
+        <div id="eventSpotlightCard" class="event-spotlight-card theme-warm-terracotta">
+            <div id="evSpotlightGrid" class="ev-spotlight-grid no-image">
+                <div>
+                    <div class="ev-tag-row">
+                        <span class="ev-tag-pill" id="evSecTagRender">✨ SỰ KIỆN ĐẶC BIỆT TẠI MÊ ĐÁ</span>
+                        <span class="ev-offer-pill" id="evSecOfferRender" style="display:none;">ƯU ĐÃI ĐẶC BIỆT</span>
+                    </div>
+                    <h2 class="ev-main-title" id="evSecTitleRender">Trạm Dừng Chân Chữa Lành</h2>
+                    <p class="ev-main-subtitle" id="evSecSubtitleRender"></p>
+
+                    <div class="ev-meta-bar">
+                        <div id="evSecVoucherBox" class="ev-voucher-box" style="display:none;" onclick="window.copyEventPromoCode()" title="Bấm để sao chép mã ưu đãi">
+                            <span style="font-size:0.84rem; opacity:0.92;">🎟 Mã ưu đãi:</span>
+                            <span class="ev-voucher-code" id="evSecPromoCodeRender">MEDA20</span>
+                            <span class="ev-voucher-copy-btn" id="evSecCopyBtnText">Sao chép</span>
+                        </div>
+                        <div id="evSecCountdownBox" class="ev-countdown-row" style="display:none;">
+                            <div class="ev-cd-item"><strong id="evCdDays">00</strong><span>Ngày</span></div>
+                            <div class="ev-cd-item"><strong id="evCdHours">00</strong><span>Giờ</span></div>
+                            <div class="ev-cd-item"><strong id="evCdMins">00</strong><span>Phút</span></div>
+                            <div class="ev-cd-item"><strong id="evCdSecs">00</strong><span>Giây</span></div>
+                        </div>
+                    </div>
+
+                    <div id="evSecPerksGrid" class="ev-perks-grid" style="display:none;"></div>
+
+                    <button type="button" id="evSecCtaBtn" class="ev-cta-btn" onclick="document.getElementById('menuSectionContainer').scrollIntoView({behavior:'smooth'})">
+                        Thưởng Thức Ngay ↓
+                    </button>
+                </div>
+                <div class="ev-poster-wrap" id="evSecPosterWrap" style="display:none;">
+                    <img id="evSecPosterImg" src="" alt="Sự kiện Mê Đá">
+                </div>
+            </div>
+
+            <!-- Danh sách món nổi bật trong sự kiện -->
+            <div id="evSecFeaturedBlock" class="ev-featured-block" style="display:none;">
+                <div class="ev-featured-header">
+                    <h4>🧋 Món Ngon Tâm Điểm Trong Sự Kiện</h4>
+                    <span style="font-size:0.8rem; opacity:0.88;">Bấm "+ Thêm Vào Giỏ" để thưởng thức ngay</span>
+                </div>
+                <div id="evSecFeaturedGrid" class="ev-featured-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POPUP CHÀO MỪNG SỰ KIỆN (INJECTED TỪ SUKIEN.HTML) -->
+    <div id="eventPopupOverlay" onclick="if(event.target===this) window.closeEventPopup()">
+        <div class="event-popup-modal">
+            <button type="button" class="event-popup-close" onclick="window.closeEventPopup()">✕</button>
+            <img id="evPopImgRender" src="" alt="Sự kiện Mê Đá" style="display:none; width:100%; max-height:210px; object-fit:cover;">
+            <div style="padding: 1.75rem 1.5rem;">
+                <span id="evPopBadgeRender" style="display:inline-block; background:#FFF3E0; color:var(--accent); font-weight:800; font-size:0.76rem; padding:4px 12px; border-radius:99px; margin-bottom:10px;">🎁 QUÀ TẶNG TỪ MÊ ĐÁ</span>
+                <h3 id="evPopTitleRender" style="font-family:var(--font-heading); font-size:1.4rem; color:var(--primary); margin-bottom:8px;">Chào mừng bạn đến với Mê Đá!</h3>
+                <p id="evPopContentRender" style="font-size:0.92rem; color:var(--text-muted); margin-bottom:16px; line-height:1.55;"></p>
+                <div id="evPopVoucherWrap" style="display:none; background:#FAF6F1; border:1.5px dashed var(--accent); padding:9px 14px; border-radius:10px; margin-bottom:16px; cursor:pointer;" onclick="window.copyEventPromoCode()">
+                    <span style="font-size:0.82rem; color:var(--text-muted);">Mã ưu đãi (Bấm để lưu): </span>
+                    <strong id="evPopPromoRender" style="color:var(--accent); font-size:1rem; letter-spacing:1px;">MEDA20</strong>
+                </div>
+                <button type="button" id="evPopCtaBtnRender" class="btn-checkout" style="padding:13px; font-size:0.98rem;" onclick="window.acceptEventPopupCta()">
+                    Nhận Ưu Đãi &amp; Xem Menu Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Khu vực Menu chính -->
+    <div class="container" id="menuSectionContainer">
+        <div class="section-header">
+            <h2 class="menu-title">Câu Chuyện Đồ Uống</h2>
+        </div>
+        <div id="productsGrid" class="products-grid">
+            <div style="text-align: center; color: #888; grid-column: 1/-1;">Đang nạp menu từ Đám mây... ⏳</div>
+        </div>
+    </div>
+
+    <!-- HIỆU ỨNG SÓNG BIỂN CUỘN LIÊN TỤC -->
+    <div class="ocean-waves">
+        <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(48, 115, 175, 0.7)" />
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(48, 115, 175, 0.5)" />
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(48, 115, 175, 0.3)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="#1C4B70" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Nút gọi Giỏ hàng nổi -->
+    <button class="floating-cart-btn" onclick="window.toggleCart()">
+        🛒
+        <span id="cartBadgeCount" class="cart-badge">0</span>
+    </button>
+
+    <!-- Sidebar Giỏ hàng (Ngăn kéo) -->
+    <div class="cart-overlay" id="cartOverlay" onclick="window.toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Giỏ Hàng Của Bạn</h3>
+            <button class="close-cart-btn" onclick="window.toggleCart()">✕</button>
+        </div>
+        <div class="cart-body">
+            <p role="status" id="cartStockNotice"></p>
+            <div id="cartItems"><div class="empty-cart-msg">Giỏ hàng đang trống. Hãy chọn một câu chuyện nhé!</div></div>
+            <div class="customer-info-box" id="customerInfoBox" style="display: none;">
+                <label for="custName">Tên của bạn:</label>
+                <input type="text" id="custName" placeholder="Nhập tên của bạn: " required>
+                <label for="orderType">Hình thức sử dụng:</label>
+                <select id="orderType">
+                    <option value="Tại chỗ">Dùng tại chỗ</option>
+                    <option value="Mang về">Take away</option>
+                </select>
+                <label for="voucherCode">Mã giảm giá (Voucher):</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="voucherCode" placeholder="Nhập mã voucher nếu có..." style="flex: 1;" onkeydown="if(event.key==='Enter'){event.preventDefault();window.applyVoucher();}">
+                    <button type="button" style="padding: 10px 16px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: inherit;" onclick="window.applyVoucher()">Áp dụng</button>
+                </div>
+                <div id="voucherResult" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;"></div>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total"><span>Tổng tiền:</span><span id="cartTotal">0 đ</span></div>
+            <div id="discountRow" style="display: none; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--green); margin-bottom: 6px;">
+                <span id="discountLabel">Giảm giá (0%):</span><span id="discountAmount">-0 đ</span>
+            </div>
+            <div id="finalTotalRow" style="display: none; justify-content: space-between; font-size: 1.3rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem;">
+                <span>Thanh toán:</span><span id="finalTotal">0 đ</span>
+            </div>
+            <button id="btnCheckout" class="btn-checkout" onclick="window.proceedToCheckout()" disabled>Thanh Toán Qua QR</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT TẠO LÁ RƠI & RÙA BÒ TRÊN VIỀN CHỮ, LOGO, KHUNG ẢNH -->
+    <script>
+        // 1. Tạo lá rơi
+        const leavesContainer = document.getElementById('leavesContainer');
+        for (let i = 0; i < 20; i++) {
+            let leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = (Math.random() * 8 + 6) + 's';
+            leaf.style.animationDelay = Math.random() * 5 + 's';
+            leavesContainer.appendChild(leaf);
+        }
+
+        // 2. HỆ THỐNG RÙA BÒ TRÊN TẤT CẢ CÁC VIỀN CHỮ, LOGO, KHUNG SẢN PHẨM
+        // (Tọa độ gắn theo trang document, có hiệu ứng bò xuống thay vì nhảy, có thể bò ra ngoài màn hình)
+        const turtleWrapper = document.getElementById('roamingTurtle');
+        const turtleRotator = document.getElementById('turtleRotator');
+        const turtleTooltip = document.getElementById('turtleTooltip');
+        const turtleShadow = document.getElementById('turtleShadow');
+
+        const TURTLE_SIZE = 90;
+        const FOOT_OFFSET = 14; // Độ bù khoảng trống dưới chân trong ảnh rua-3d.gif để chân chạm sát viền
+
+        const surfaceQuotes = {
+            logo: [
+                "Đứng trên đỉnh Mê Đá mát quá~ 🐢",
+                "Logo đẹp ghê! ✨"
+            ],
+            text: [
+                "Bò trên đây thích thật đấy! 🐾",
+                "Chậm lại một chút... Thưởng thức Mê Đá ☕",
+                "Êm chân quá~ 💚"
+            ],
+            card: [
+                "Món này nhìn hấp dẫn quá~ 🧋",
+                "Chọn món này đi bạn ơi! 💚"
+            ],
+            crawlDown: [
+                "Từ từ bò xuống nào... 🐾",
+                "Bám chắc vào, đang bò xuống đây! 🐢",
+                "Một, hai, một, hai... bò xuống nhẹ nhàng~ ✨"
+            ]
+        };
+
+        let speechTimeout = null;
+        function sayQuote(text, duration = 2600) {
+            turtleTooltip.textContent = text;
+            turtleTooltip.classList.add('show');
+            clearTimeout(speechTimeout);
+            speechTimeout = setTimeout(() => {
+                turtleTooltip.classList.remove('show');
+            }, duration);
+        }
+
+        function spawnParticle(pageX, pageY, symbol = "🐾") {
+            const p = document.createElement('div');
+            p.className = 'pet-particle';
+            p.textContent = symbol;
+            p.style.left = (pageX + TURTLE_SIZE / 2 - 8) + 'px';
+            p.style.top = (pageY + TURTLE_SIZE / 2) + 'px';
+            p.style.setProperty('--dx', ((Math.random() - 0.5) * 20) + 'px');
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 700);
+        }
+
+        function setPetStateClass(stateName) {
+            turtleWrapper.classList.remove('state-walk', 'state-climb', 'state-idle', 'state-drag');
+            turtleWrapper.classList.add('state-' + stateName);
+        }
+
+        // Đặt tư thế xoay của rùa (ảnh rua-3d.gif gốc: đầu quay TRÁI -X, chân ở DƯỚI +Y, mai ở TRÊN -Y)
+        function setTurtlePose(mode, dir, clingSide = 'left') {
+            if (mode === 'horizontal') {
+                turtleShadow.style.opacity = '1';
+                // dir = 1 (đi sang phải +X) -> scaleX(-1); dir = -1 (đi sang trái -X) -> scaleX(1)
+                const flipX = dir >= 0 ? -1 : 1;
+                turtleRotator.style.transform = `rotate(0deg) scaleX(${flipX})`;
+            } else if (mode === 'vertical') {
+                turtleShadow.style.opacity = '0';
+                // dir = 1 (BÒ XUỐNG +Y), dir = -1 (BÒ LÊN -Y)
+                // clingSide = 'left': đi ở mép trái vật thể (chân bám về bên phải +X)
+                // clingSide = 'right': đi ở mép phải vật thể (chân bám về bên trái -X)
+                if (clingSide === 'left') {
+                    if (dir > 0) {
+                        // BÒ XUỐNG (+Y), chân bám PHẢI (+X)
+                        turtleRotator.style.transform = `rotate(-90deg) scaleX(1)`;
+                    } else {
+                        // BÒ LÊN (-Y), chân bám PHẢI (+X)
+                        turtleRotator.style.transform = `rotate(-90deg) scaleX(-1)`;
+                    }
+                } else {
+                    if (dir > 0) {
+                        // BÒ XUỐNG (+Y), chân bám TRÁI (-X)
+                        turtleRotator.style.transform = `rotate(90deg) scaleX(-1)`;
+                    } else {
+                        // BÒ LÊN (-Y), chân bám TRÁI (-X)
+                        turtleRotator.style.transform = `rotate(90deg) scaleX(1)`;
+                    }
+                }
+            }
+        }
+
+        // Lấy danh sách TẤT CẢ các phần tử mà rùa có thể bám được trên toàn trang (tính theo tọa độ trang document)
+        function getAllClimbableElements() {
+            const selectors = [
+                { sel: '.hero-logo', kind: 'logo' },
+                { sel: '.hero-content h1', kind: 'text' },
+                { sel: '.hero-content p', kind: 'text' },
+                { sel: '.nav-brand', kind: 'text' },
+                { sel: '.nav-link', kind: 'text' },
+                { sel: '#dynamicEventBanner', kind: 'text' },
+                { sel: '#eventSpotlightCard', kind: 'card' },
+                { sel: '.menu-title', kind: 'text' },
+                { sel: '.product-card', kind: 'card' },
+                { sel: '.product-img-wrapper', kind: 'card' },
+                { sel: '.product-name', kind: 'text' },
+                { sel: '.btn-add', kind: 'text' }
+            ];
+
+            const list = [];
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            selectors.forEach(({ sel, kind }) => {
+                document.querySelectorAll(sel).forEach(el => {
+                    const r = el.getBoundingClientRect();
+                    if (r.width >= 40 && r.height >= 15) {
+                        list.push({
+                            el,
+                            kind,
+                            left: r.left + scrollX,
+                            right: r.right + scrollX,
+                            top: r.top + scrollY,
+                            bottom: r.bottom + scrollY,
+                            width: r.width,
+                            height: r.height
+                        });
+                    }
+                });
+            });
+            return list;
+        }
+
+        // Cập nhật lại tọa độ document mới nhất của một phần tử đang bám
+        function getElementDocRect(el) {
+            const r = el.getBoundingClientRect();
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+            return {
+                left: r.left + scrollX,
+                right: r.right + scrollX,
+                top: r.top + scrollY,
+                bottom: r.bottom + scrollY,
+                width: r.width,
+                height: r.height
+            };
+        }
+
+        // Tính tọa độ (x, y) trên viền của phần tử bất kỳ (viền chữ, logo, khung ảnh...)
+        function getSurfaceCoords(el, edgeType, progress) {
+            const rect = getElementDocRect(el);
+            if (edgeType === 'top' || edgeType === 'bottom') {
+                const surfaceY = (edgeType === 'bottom') ? rect.bottom : rect.top;
+                const minX = rect.left - TURTLE_SIZE * 0.35;
+                const maxX = rect.right - TURTLE_SIZE * 0.65;
+                const span = Math.max(20, maxX - minX);
+                return {
+                    x: minX + progress * span,
+                    y: surfaceY - TURTLE_SIZE + FOOT_OFFSET,
+                    length: span
+                };
+            } else {
+                // edgeType === 'left' hoặc 'right' (bò dọc theo viền bên của logo, khung chữ, khung sản phẩm)
+                const minY = rect.top - TURTLE_SIZE * 0.45;
+                const maxY = rect.bottom - TURTLE_SIZE * 0.65;
+                const span = Math.max(24, maxY - minY);
+                const xPos = (edgeType === 'left')
+                    ? (rect.left - TURTLE_SIZE + FOOT_OFFSET + 6)
+                    : (rect.right - FOOT_OFFSET - 6);
+                return {
+                    x: xPos,
+                    y: minY + progress * span,
+                    length: span
+                };
+            }
+        }
+
+        let state = {
+            mode: 'surface-horizontal',
+            targetEl: null,
+            targetKind: 'logo',
+            edgeType: 'top',     // 'top' | 'bottom' | 'left' | 'right'
+            progress: 0.2,
+            dir: 1,
+            speed: 55,
+            idleTimer: 0,
+            x: 200,
+            y: 120,
+            waypoints: [],
+            onWaypointsDone: null
+        };
+
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let particleTimer = 0;
+
+        // Tạo lộ trình BÒ XUỐNG / BÒ DI CHUYỂN (không nhảy) từ vị trí hiện tại (state.x, state.y) tới điểm đích (destX, destY)
+        function startCrawlPathTo(destX, destY, onDone) {
+            state.mode = 'crawl-transition';
+            state.waypoints = [];
+
+            const dx = destX - state.x;
+            const dy = destY - state.y;
+
+            // Nếu đích nằm khác độ cao Y đáng kể -> Thực hiện hiệu ứng BÒ XUỐNG (hoặc bò lên) theo trục dọc trước, rồi bò ngang vào viền!
+            if (Math.abs(dy) > 12 && Math.abs(dx) > 12) {
+                state.waypoints.push({
+                    x: state.x,
+                    y: destY,
+                    axis: 'vertical',
+                    dir: dy >= 0 ? 1 : -1,
+                    clingSide: dx >= 0 ? 'left' : 'right'
+                });
+                state.waypoints.push({
+                    x: destX,
+                    y: destY,
+                    axis: 'horizontal',
+                    dir: dx >= 0 ? 1 : -1
+                });
+            } else if (Math.abs(dy) >= Math.abs(dx)) {
+                state.waypoints.push({
+                    x: destX,
+                    y: destY,
+                    axis: 'vertical',
+                    dir: dy >= 0 ? 1 : -1,
+                    clingSide: 'left'
+                });
+            } else {
+                state.waypoints.push({
+                    x: destX,
+                    y: destY,
+                    axis: 'horizontal',
+                    dir: dx >= 0 ? 1 : -1
+                });
+            }
+
+            state.onWaypointsDone = onDone;
+            applyCurrentWaypointPose();
+        }
+
+        function applyCurrentWaypointPose() {
+            if (state.waypoints.length === 0) return;
+            const wp = state.waypoints[0];
+            if (wp.axis === 'vertical') {
+                setPetStateClass('climb');
+                setTurtlePose('vertical', wp.dir, wp.clingSide || 'left');
+            } else {
+                setPetStateClass('walk');
+                setTurtlePose('horizontal', wp.dir);
+            }
+        }
+
+        // Chọn một chỗ bám tiếp theo (viền chữ, logo, thẻ sản phẩm, hoặc bò ra ngoài màn hình rồi quay lại)
+        function pickNextClimbableTarget(excludeEl = null, preferBelow = false) {
+            const allItems = getAllClimbableElements();
+            if (allItems.length === 0) return;
+
+            const docWidth = document.documentElement.clientWidth || window.innerWidth;
+
+            // 20% cơ hội: Cho phép rùa bò hẳn ra ngoài mép màn hình (trái hoặc phải) rồi bò ngược vào một phần tử khác
+            if (!preferBelow && Math.random() < 0.2) {
+                const goLeftOut = state.x < docWidth / 2;
+                const offscreenX = goLeftOut ? (-TURTLE_SIZE - 25) : (docWidth + 25);
+                const offscreenY = state.y;
+
+                sayQuote("Trẫm bò ra ngoài màn hình dạo chút đây~ 🐢", 2400);
+                startCrawlPathTo(offscreenX, offscreenY, () => {
+                    const nextItem = allItems[Math.floor(Math.random() * allItems.length)];
+                    const startProg = goLeftOut ? 0.05 : 0.95;
+                    const dest = getSurfaceCoords(nextItem.el, 'top', startProg);
+                    state.y = dest.y;
+                    startCrawlPathTo(dest.x, dest.y, () => {
+                        attachToElement(nextItem.el, nextItem.kind, 'top', startProg, goLeftOut ? 1 : -1);
+                    });
+                });
+                return;
+            }
+
+            // Ưu tiên chọn các phần tử ở gần hoặc ở phía dưới để hiệu ứng "bò xuống" tự nhiên nhất
+            let candidates = allItems.filter(item => item.el !== excludeEl);
+            if (candidates.length === 0) candidates = allItems;
+
+            if (preferBelow) {
+                const belowItems = candidates.filter(item => item.top > state.y + 10);
+                if (belowItems.length > 0) {
+                    belowItems.sort((a, b) => Math.hypot(a.left - state.x, a.top - state.y) - Math.hypot(b.left - state.x, b.top - state.y));
+                    candidates = belowItems.slice(0, Math.min(3, belowItems.length));
+                }
+            } else {
+                candidates.sort((a, b) => Math.hypot(a.left - state.x, a.top - state.y) - Math.hypot(b.left - state.x, b.top - state.y));
+                if (Math.random() < 0.75) {
+                    candidates = candidates.slice(0, Math.min(4, candidates.length));
+                }
+            }
+
+            const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+            const startProg = Math.random() < 0.5 ? 0.1 : 0.9;
+            const dest = getSurfaceCoords(chosen.el, 'top', startProg);
+
+            if (dest.y > state.y + 20) {
+                const qList = surfaceQuotes.crawlDown;
+                sayQuote(qList[Math.floor(Math.random() * qList.length)], 2300);
+            }
+
+            startCrawlPathTo(dest.x, dest.y, () => {
+                attachToElement(chosen.el, chosen.kind, 'top', startProg, startProg < 0.5 ? 1 : -1);
+            });
+        }
+
+        function attachToElement(el, kind, edgeType, progress, dir) {
+            state.targetEl = el;
+            state.targetKind = kind || 'text';
+            state.edgeType = edgeType;
+            state.progress = progress;
+            state.dir = dir;
+            state.speed = (edgeType === 'left' || edgeType === 'right') ? 48 : 58;
+
+            if (edgeType === 'left' || edgeType === 'right') {
+                state.mode = 'surface-vertical';
+                setPetStateClass('climb');
+                setTurtlePose('vertical', state.dir, edgeType);
+            } else {
+                state.mode = 'surface-horizontal';
+                setPetStateClass('walk');
+                setTurtlePose('horizontal', state.dir);
+                if (Math.random() < 0.55) {
+                    const qList = surfaceQuotes[state.targetKind] || surfaceQuotes.text;
+                    sayQuote(qList[Math.floor(Math.random() * qList.length)], 2600);
+                }
+            }
+        }
+
+        // Khởi tạo: Đặt rùa bắt đầu ngay trên đỉnh Logo Mê Đá (.hero-logo) hoặc tiêu đề H1
+        function initTurtleOnPage() {
+            const logoEl = document.querySelector('.hero-logo') || document.querySelector('.hero-content h1');
+            if (logoEl) {
+                const coords = getSurfaceCoords(logoEl, 'top', 0.2);
+                state.x = coords.x;
+                state.y = coords.y;
+                attachToElement(logoEl, 'logo', 'top', 0.2, 1);
+                sayQuote("Trẫm đang dạo trên Logo Mê Đá đây~ 🐢", 3000);
+            } else {
+                pickNextClimbableTarget();
+            }
+            turtleWrapper.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+        }
+
+        initTurtleOnPage();
+
+        let lastTime = performance.now();
+
+        function animateTurtle(now) {
+            const dt = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
+
+            if (!isDragging) {
+                // 1. ĐANG BÒ TRÊN VIỀN NGANG CỦA PHẦN TỬ (VIỀN CHỮ, TRÊN LOGO, VIỀN ẢNH...)
+                if (state.mode === 'surface-horizontal') {
+                    if (!state.targetEl || !document.body.contains(state.targetEl)) {
+                        pickNextClimbableTarget();
+                    } else {
+                        const coords = getSurfaceCoords(state.targetEl, state.edgeType, state.progress);
+                        state.progress += (state.dir * state.speed * dt) / coords.length;
+
+                        const clamped = Math.max(0, Math.min(1, state.progress));
+                        const updated = getSurfaceCoords(state.targetEl, state.edgeType, clamped);
+                        state.x = updated.x;
+                        state.y = updated.y;
+
+                        if (Math.random() < 0.003) {
+                            state.mode = 'surface-idle';
+                            state.idleTimer = 1.0 + Math.random() * 1.4;
+                            setPetStateClass('idle');
+                        }
+
+                        if (state.progress >= 1 || state.progress <= 0) {
+                            const reachedRight = state.progress >= 1;
+                            state.progress = reachedRight ? 1 : 0;
+
+                            const rect = getElementDocRect(state.targetEl);
+                            const rand = Math.random();
+
+                            // Nếu phần tử đủ cao (như Logo, Khung sản phẩm, Tiêu đề lớn) và đang ở viền trên ('top') -> BÒ XUỐNG theo cạnh dọc của chính phần tử đó!
+                            if (state.edgeType === 'top' && rect.height >= 40 && rand < 0.65) {
+                                const side = reachedRight ? 'right' : 'left';
+                                attachToElement(state.targetEl, state.targetKind, side, 0.05, 1); // dir = 1: Bò xuống!
+                                sayQuote("Mệt quá xuống thôi~ 🐾", 2200);
+                            }
+                            // Hoặc bò xuống phần tử tiếp theo ở bên dưới
+                            else if (rand < 0.88) {
+                                pickNextClimbableTarget(state.targetEl, true);
+                            }
+                            else {
+                                state.dir *= -1;
+                                setTurtlePose('horizontal', state.dir);
+                            }
+                        }
+                    }
+                }
+
+                // 2. ĐANG BÒ DỌC (BÒ XUỐNG HOẶC BÒ LÊN) THEO CẠNH TRÁI/PHẢI CỦA LOGO, CHỮ, KHUNG ẢNH
+                else if (state.mode === 'surface-vertical') {
+                    if (!state.targetEl || !document.body.contains(state.targetEl)) {
+                        pickNextClimbableTarget();
+                    } else {
+                        const coords = getSurfaceCoords(state.targetEl, state.edgeType, state.progress);
+                        state.progress += (state.dir * state.speed * dt) / coords.length;
+
+                        const clamped = Math.max(0, Math.min(1, state.progress));
+                        const updated = getSurfaceCoords(state.targetEl, state.edgeType, clamped);
+                        state.x = updated.x;
+                        state.y = updated.y;
+
+                        particleTimer += dt;
+                        if (particleTimer > 0.4) {
+                            particleTimer = 0;
+                            spawnParticle(state.x, state.y, "🐾");
+                        }
+
+                        // Khi BÒ XUỐNG tới đáy phần tử (progress >= 1)
+                        if (state.progress >= 1) {
+                            state.progress = 1;
+                            if (Math.random() < 0.45) {
+                                const walkDir = (state.edgeType === 'left') ? 1 : -1;
+                                const startP = (state.edgeType === 'left') ? 0.05 : 0.95;
+                                attachToElement(state.targetEl, state.targetKind, 'bottom', startP, walkDir);
+                            } else {
+                                pickNextClimbableTarget(state.targetEl, true);
+                            }
+                        }
+                        // Khi BÒ LÊN tới đỉnh phần tử (progress <= 0)
+                        else if (state.progress <= 0) {
+                            state.progress = 0;
+                            const walkDir = (state.edgeType === 'left') ? 1 : -1;
+                            const startP = (state.edgeType === 'left') ? 0.05 : 0.95;
+                            attachToElement(state.targetEl, state.targetKind, 'top', startP, walkDir);
+                        }
+                    }
+                }
+
+                // 3. ĐANG BÒ CHUYỂN TIẾP (BÒ XUỐNG / BÒ NGANG SANG CHỖ BÁM MỚI HOẶC RA NGOÀI MÀN HÌNH - KHÔNG NHẢY)
+                else if (state.mode === 'crawl-transition') {
+                    if (state.waypoints.length === 0) {
+                        if (state.onWaypointsDone) {
+                            const fn = state.onWaypointsDone;
+                            state.onWaypointsDone = null;
+                            fn();
+                        } else {
+                            pickNextClimbableTarget();
+                        }
+                    } else {
+                        const wp = state.waypoints[0];
+                        const dx = wp.x - state.x;
+                        const dy = wp.y - state.y;
+                        const dist = Math.hypot(dx, dy);
+                        const crawlSpeed = 68;
+
+                        particleTimer += dt;
+                        if (particleTimer > 0.42) {
+                            particleTimer = 0;
+                            spawnParticle(state.x, state.y, "🐾");
+                        }
+
+                        if (dist <= crawlSpeed * dt + 2) {
+                            state.x = wp.x;
+                            state.y = wp.y;
+                            state.waypoints.shift();
+                            if (state.waypoints.length > 0) {
+                                applyCurrentWaypointPose();
+                            }
+                        } else {
+                            state.x += (dx / dist) * crawlSpeed * dt;
+                            state.y += (dy / dist) * crawlSpeed * dt;
+                        }
+                    }
+                }
+
+                // 4. ĐANG ĐỨNG NGHỈ TRÊN VIỀN CHỮ / LOGO
+                else if (state.mode === 'surface-idle') {
+                    if (!state.targetEl || !document.body.contains(state.targetEl)) {
+                        pickNextClimbableTarget();
+                    } else {
+                        const updated = getSurfaceCoords(state.targetEl, state.edgeType, state.progress);
+                        state.x = updated.x;
+                        state.y = updated.y;
+                        state.idleTimer -= dt;
+                        if (state.idleTimer <= 0) {
+                            state.mode = 'surface-horizontal';
+                            setPetStateClass('walk');
+                            setTurtlePose('horizontal', state.dir);
+                        }
+                    }
+                }
+
+                turtleWrapper.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+            }
+
+            requestAnimationFrame(animateTurtle);
+        }
+
+        requestAnimationFrame(animateTurtle);
+
+        // KÉO THẢ RÙA BẰNG CHUỘT: Thả rùa gần chữ, logo hay khung ảnh nào, rùa sẽ bò bám vào chỗ đó!
+        turtleWrapper.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            setPetStateClass('drag');
+            turtleShadow.style.opacity = '0';
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+            dragOffsetX = (e.clientX + scrollX) - state.x;
+            dragOffsetY = (e.clientY + scrollY) - state.y;
+            turtleWrapper.setPointerCapture(e.pointerId);
+            sayQuote("Thả trẫm raaaa....! 🐢", 2800);
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+            const newX = (e.clientX + scrollX) - dragOffsetX;
+            const newY = (e.clientY + scrollY) - dragOffsetY;
+            if (Math.abs(newX - state.x) > 1) {
+                setTurtlePose('horizontal', newX - state.x);
+            }
+            state.x = newX;
+            state.y = newY;
+            turtleWrapper.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+        });
+
+        window.addEventListener('pointerup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const allItems = getAllClimbableElements();
+            if (allItems.length > 0) {
+                let bestItem = allItems[0];
+                let bestDist = Infinity;
+                const centerX = state.x + TURTLE_SIZE / 2;
+                const centerY = state.y + TURTLE_SIZE / 2;
+
+                allItems.forEach(item => {
+                    const cx = (item.left + item.right) / 2;
+                    const cy = (item.top + item.bottom) / 2;
+                    const d = Math.hypot(centerX - cx, centerY - cy);
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestItem = item;
+                    }
+                });
+
+                const dest = getSurfaceCoords(bestItem.el, 'top', 0.5);
+                startCrawlPathTo(dest.x, dest.y, () => {
+                    attachToElement(bestItem.el, bestItem.kind, 'top', 0.5, 1);
+                });
+            }
+        });
+    </script>
+
+    <!-- TÍCH HỢP FIREBASE (REALTIME 0MS SYNC - ĐÃ TỐI ƯU CACHE & DOM) -->
+    <script type="module">
+        import { collection, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+        import { db, clearWorkSession, remote, ready as readyAnon, fmtDateTimeVN, fmtDateVN } from "./assets/meda.js";
+
+        let cart = [];
+        let globalProducts = [];
+        let globalInventory = [];
+        let currentEventCfg = null;
+        let menuRenderedOnce = false;
+        const posInventoryMap = new Map();
+        const posProductsMap = new Map();
+        let unsubPosInv = null;
+        let unsubPosProd = null;
+        let unsubPosEvent = null;
+
+        let countdownIntervalId = null;
+        let lastAppliedAmbient = 'default';
+
+        window.addEventListener('beforeunload', () => {
+            if (unsubPosInv) { unsubPosInv(); unsubPosInv = null; }
+            if (unsubPosProd) { unsubPosProd(); unsubPosProd = null; }
+            if (unsubPosEvent) { unsubPosEvent(); unsubPosEvent = null; }
+            if (countdownIntervalId) { clearInterval(countdownIntervalId); countdownIntervalId = null; }
+        });
+
+        function saveMenuSessionCache() {
+            try {
+                sessionStorage.setItem('meda_menu_cache', JSON.stringify({
+                    event: currentEventCfg,
+                    inventory: globalInventory,
+                    products: globalProducts,
+                    cachedAt: Date.now()
+                }));
+            } catch (_) {}
+        }
+
+        function applyAmbientParticles(effectType = 'default') {
+            if (lastAppliedAmbient === effectType) return;
+            lastAppliedAmbient = effectType;
+            const container = document.getElementById('leavesContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const symbolMap = {
+                sakura: ['🌸', '🌺', '💮'],
+                snow: ['❄️', '❅', '❆'],
+                sparkles: ['✨', '⭐', '🌟'],
+                hearts: ['🧡', '💛', '✨']
+            };
+            const symbols = symbolMap[effectType];
+
+            for (let i = 0; i < 20; i++) {
+                const el = document.createElement('div');
+                if (!symbols) {
+                    el.className = 'leaf';
+                } else {
+                    el.className = 'ambient-emoji';
+                    el.textContent = symbols[i % symbols.length];
+                }
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                el.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(el);
+            }
+        }
+
+        function startEventCountdownTimer(endStr) {
+            if (countdownIntervalId) {
+                clearInterval(countdownIntervalId);
+                countdownIntervalId = null;
+            }
+            const box = document.getElementById('evSecCountdownBox');
+            if (!box || !endStr) {
+                if (box) box.style.display = 'none';
+                return;
+            }
+            const targetMs = new Date(endStr).getTime();
+            if (!Number.isFinite(targetMs) || targetMs <= Date.now()) {
+                box.style.display = 'none';
+                return;
+            }
+            box.style.display = 'inline-flex';
+            const pad = (n) => String(Math.max(0, Math.floor(n))).padStart(2, '0');
+            const tick = () => {
+                const diff = targetMs - Date.now();
+                if (diff <= 0) {
+                    box.style.display = 'none';
+                    clearInterval(countdownIntervalId);
+                    countdownIntervalId = null;
+                    return;
+                }
+                document.getElementById('evCdDays').textContent = pad(diff / 86400000);
+                document.getElementById('evCdHours').textContent = pad((diff % 86400000) / 3600000);
+                document.getElementById('evCdMins').textContent = pad((diff % 3600000) / 60000);
+                document.getElementById('evCdSecs').textContent = pad((diff % 60000) / 1000);
+            };
+            tick();
+            countdownIntervalId = setInterval(tick, 1000);
+        }
+
+        function renderFeaturedEventProducts() {
+            const block = document.getElementById('evSecFeaturedBlock');
+            const grid = document.getElementById('evSecFeaturedGrid');
+            if (!block || !grid) return;
+            if (!currentEventCfg || !currentEventCfg.sectionActive || !Array.isArray(currentEventCfg.featuredProductIds) || currentEventCfg.featuredProductIds.length === 0) {
+                block.style.display = 'none';
+                return;
+            }
+            const featIds = new Set(currentEventCfg.featuredProductIds);
+            const featList = globalProducts.filter(p => featIds.has(p.id));
+            if (featList.length === 0) {
+                block.style.display = 'none';
+                return;
+            }
+            block.style.display = 'block';
+            grid.innerHTML = featList.map(p => {
+                const maxCups = calculateMaxCups(p, globalInventory);
+                const inCart = cart.find(ci => ci.id === p.id);
+                const cartQty = inCart ? inCart.quantity : 0;
+                const availableCups = maxCups - cartQty;
+                const isOut = availableCups <= 0;
+
+                return `<div class="ev-feat-card">
+                    <img src="${p.image || ''}" alt="${p.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/80?text=Me+Da'">
+                    <div class="ev-feat-info">
+                        <strong>${p.name}</strong>
+                        <div class="ev-feat-price">${Number(p.price || 0).toLocaleString('vi-VN')} đ</div>
+                        <div style="font-size:0.72rem; color:${isOut ? 'var(--red)' : 'var(--green)'}; font-weight:600;">
+                            ${isOut ? 'Tạm hết món' : `Còn ${availableCups} ly`}
+                        </div>
+                    </div>
+                    <button type="button" class="ev-feat-btn" ${isOut ? 'disabled' : ''} onclick="window.addToCart('${p.id}')">
+                        ${isOut ? 'Hết món' : '+ Thêm Vào Giỏ'}
+                    </button>
+                </div>`;
+            }).join('');
+        }
+
+        window.copyEventPromoCode = function() {
+            const code = currentEventCfg && currentEventCfg.promoCode ? currentEventCfg.promoCode : '';
+            if (!code) return;
+            navigator.clipboard.writeText(code).catch(() => {});
+            const vInput = document.getElementById('voucherCode');
+            if (vInput) vInput.value = code;
+            const btnText = document.getElementById('evSecCopyBtnText');
+            if (btnText) {
+                btnText.textContent = '✓ Đã lưu mã!';
+                setTimeout(() => { btnText.textContent = 'Sao chép'; }, 2200);
+            }
+            alert(`🎟 Đã sao chép mã ưu đãi "${code}"! Hãy đọc mã hoặc ghi kèm tên khi thanh toán nhé.`);
+        };
+
+        window.closeEventPopup = function() {
+            const pop = document.getElementById('eventPopupOverlay');
+            if (pop) pop.style.display = 'none';
+        };
+
+        window.acceptEventPopupCta = function() {
+            window.closeEventPopup();
+            const sec = document.getElementById('specialEventSection');
+            if (sec && sec.style.display !== 'none') {
+                sec.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                const menu = document.getElementById('menuSectionContainer');
+                if (menu) menu.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        window.scrollToEventOrMenu = function(e) {
+            if (e) e.preventDefault();
+            window.acceptEventPopupCta();
+        };
+
+        function applyEventBanner(config) {
+            currentEventCfg = config || null;
+            const bannerEl = document.getElementById('dynamicEventBanner');
+            const secEl = document.getElementById('specialEventSection');
+            const popEl = document.getElementById('eventPopupOverlay');
+
+            // 1. Hiệu ứng không gian theo mùa
+            applyAmbientParticles((config && config.ambientEffect) ? config.ambientEffect : 'default');
+
+            // 2. Thanh thông báo ngang (Top Announcement Banner)
+            if (bannerEl) {
+                if (config && config.isActive) {
+                    document.getElementById('evBadgeRender').textContent = config.badgeText || 'HOT';
+                    document.getElementById('evTitleRender').textContent = config.title || 'Sự Kiện';
+                    document.getElementById('evDescRender').textContent = config.desc || '';
+                    bannerEl.style.backgroundColor = (!config.bgColor || config.bgColor === '#FFEBE6') ? 'var(--accent)' : config.bgColor;
+                    bannerEl.style.color = config.textColor || '#FFFFFF';
+                    const ctaEl = document.getElementById('evBannerCtaBtn');
+                    if (ctaEl) {
+                        if (config.bannerCta) {
+                            ctaEl.textContent = config.bannerCta;
+                            ctaEl.style.display = 'inline-block';
+                        } else {
+                            ctaEl.style.display = 'none';
+                        }
+                    }
+                    bannerEl.style.display = 'flex';
+                } else {
+                    bannerEl.style.display = 'none';
+                }
+            }
+
+            // 3. Khu vực Sự Kiện Đặc Biệt (Special Event Spotlight Section)
+            if (secEl) {
+                if (config && config.sectionActive) {
+                    secEl.style.display = 'block';
+                    const cardEl = document.getElementById('eventSpotlightCard');
+                    if (cardEl) {
+                        cardEl.className = `event-spotlight-card theme-${config.themeStyle || 'warm-terracotta'}`;
+                    }
+                    document.getElementById('evSecTagRender').textContent = config.sectionTag || '✨ SỰ KIỆN ĐẶC BIỆT TẠI MÊ ĐÁ';
+                    const offerEl = document.getElementById('evSecOfferRender');
+                    if (offerEl) {
+                        if (config.offerHighlight) {
+                            offerEl.textContent = config.offerHighlight;
+                            offerEl.style.display = 'inline-block';
+                        } else {
+                            offerEl.style.display = 'none';
+                        }
+                    }
+                    document.getElementById('evSecTitleRender').textContent = config.sectionTitle || config.title || 'Sự Kiện Đặc Biệt';
+                    document.getElementById('evSecSubtitleRender').textContent = config.sectionSubtitle || config.desc || '';
+
+                    const vBox = document.getElementById('evSecVoucherBox');
+                    if (vBox) {
+                        if (config.promoCode) {
+                            document.getElementById('evSecPromoCodeRender').textContent = config.promoCode;
+                            vBox.style.display = 'inline-flex';
+                        } else {
+                            vBox.style.display = 'none';
+                        }
+                    }
+
+                    if (config.countdownEnabled && config.countdownEnd) {
+                        startEventCountdownTimer(config.countdownEnd);
+                    } else {
+                        startEventCountdownTimer(null);
+                    }
+
+                    const perksGrid = document.getElementById('evSecPerksGrid');
+                    if (perksGrid) {
+                        const perks = Array.isArray(config.highlights) ? config.highlights.filter(h => h && (h.title || h.desc)) : [];
+                        if (perks.length > 0) {
+                            perksGrid.style.display = 'grid';
+                            perksGrid.innerHTML = perks.map(h => `
+                                <div class="ev-perk-item">
+                                    <strong>${h.title || ''}</strong>
+                                    <span>${h.desc || ''}</span>
+                                </div>
+                            `).join('');
+                        } else {
+                            perksGrid.style.display = 'none';
+                        }
+                    }
+
+                    const gridWrap = document.getElementById('evSpotlightGrid');
+                    const posterWrap = document.getElementById('evSecPosterWrap');
+                    const posterImg = document.getElementById('evSecPosterImg');
+                    if (config.sectionImage && posterWrap && posterImg) {
+                        posterImg.src = config.sectionImage;
+                        posterWrap.style.display = 'block';
+                        if (gridWrap) gridWrap.classList.remove('no-image');
+                    } else {
+                        if (posterWrap) posterWrap.style.display = 'none';
+                        if (gridWrap) gridWrap.classList.add('no-image');
+                    }
+
+                    const secCta = document.getElementById('evSecCtaBtn');
+                    if (secCta) secCta.textContent = config.sectionCtaText || 'Thưởng Thức Ngay ↓';
+
+                    renderFeaturedEventProducts();
+                } else {
+                    secEl.style.display = 'none';
+                    startEventCountdownTimer(null);
+                }
+            }
+
+            // 4. Popup Chào Mừng Sự Kiện (Welcome Event Modal)
+            if (popEl) {
+                if (config && config.popupActive) {
+                    const sigKey = `meda_popup_seen_${config.updatedAt || config.title || 'v1'}`;
+                    const alreadySeen = config.popupFrequency !== 'always' && sessionStorage.getItem(sigKey) === '1';
+                    if (!alreadySeen) {
+                        document.getElementById('evPopBadgeRender').textContent = config.popupBadge || '🎁 QUÀ TẶNG TỪ MÊ ĐÁ';
+                        document.getElementById('evPopTitleRender').textContent = config.popupTitle || config.sectionTitle || config.title || 'Chào mừng bạn đến với Mê Đá!';
+                        document.getElementById('evPopContentRender').textContent = config.popupContent || config.sectionSubtitle || config.desc || '';
+                        document.getElementById('evPopCtaBtnRender').textContent = config.popupCtaText || 'Nhận Ưu Đãi & Xem Menu Ngay';
+
+                        const popImg = document.getElementById('evPopImgRender');
+                        if (popImg) {
+                            if (config.sectionImage) {
+                                popImg.src = config.sectionImage;
+                                popImg.style.display = 'block';
+                            } else {
+                                popImg.style.display = 'none';
+                            }
+                        }
+                        const popVoucher = document.getElementById('evPopVoucherWrap');
+                        if (popVoucher) {
+                            if (config.promoCode) {
+                                document.getElementById('evPopPromoRender').textContent = config.promoCode;
+                                popVoucher.style.display = 'block';
+                            } else {
+                                popVoucher.style.display = 'none';
+                            }
+                        }
+                        popEl.style.display = 'flex';
+                        try { sessionStorage.setItem(sigKey, '1'); } catch (_) {}
+                    }
+                } else {
+                    popEl.style.display = 'none';
+                }
+            }
+        }
+
+        async function loadDataFromCloud() {
+            // 1. Hiển thị tức thì (0ms) từ sessionStorage nếu đã có bộ nhớ đệm
+            try {
+                const cachedRaw = sessionStorage.getItem('meda_menu_cache');
+                if (cachedRaw) {
+                    const cached = JSON.parse(cachedRaw);
+                    if (cached && Array.isArray(cached.products) && cached.products.length > 0) {
+                        globalProducts = cached.products;
+                        globalInventory = cached.inventory || [];
+                        if (cached.event) applyEventBanner(cached.event);
+                        renderMenu(true);
+                        updateCartUI();
+                    }
+                }
+            } catch (_) {}
+
+            try {
+                // Phải đăng nhập ẩn danh trước khi đọc dữ liệu (Security Rules yêu cầu)
+                await readyAnon();
+
+                // 2. Đăng ký lắng nghe Realtime (0ms delay qua IndexedDB multi-tab cache)
+                if (unsubPosEvent) unsubPosEvent();
+                unsubPosEvent = onSnapshot(doc(db, "config", "event"), (snap) => {
+                    applyEventBanner(snap.exists() ? snap.data() : null);
+                    saveMenuSessionCache();
+                });
+
+                if (unsubPosInv) unsubPosInv();
+                unsubPosInv = onSnapshot(collection(db, "inventory"), (snap) => {
+                    snap.docChanges().forEach(ch => {
+                        if (ch.type === 'removed') posInventoryMap.delete(ch.doc.id);
+                        else posInventoryMap.set(ch.doc.id, { ...ch.doc.data(), id: ch.doc.data().id || ch.doc.id });
+                    });
+                    globalInventory = Array.from(posInventoryMap.values());
+                    reconcileCart();
+                    saveMenuSessionCache();
+                    if (menuRenderedOnce) {
+                        updateMenuStockOnly();
+                    } else if (globalProducts.length > 0) {
+                        renderMenu(true);
+                    }
+                });
+
+                if (unsubPosProd) unsubPosProd();
+                unsubPosProd = onSnapshot(collection(db, "products"), (snap) => {
+                    snap.docChanges().forEach(ch => {
+                        if (ch.type === 'removed') posProductsMap.delete(ch.doc.id);
+                        else posProductsMap.set(ch.doc.id, { ...ch.doc.data(), id: ch.doc.id });
+                    });
+                    globalProducts = Array.from(posProductsMap.values());
+                    reconcileCart();
+                    saveMenuSessionCache();
+                    renderMenu(true);
+                    updateCartUI();
+                }, (error) => {
+                    console.error("Lỗi đồng bộ thực đơn:", error);
+                    if (!globalProducts.length) {
+                        document.getElementById('productsGrid').innerHTML = '<div style="color:red; grid-column: 1/-1;">Lỗi kết nối Đám mây. Vui lòng tải lại trang.</div>';
+                    }
+                });
+            } catch (error) {
+                console.error("Lỗi tải dữ liệu:", error);
+                if (!globalProducts.length) {
+                    document.getElementById('productsGrid').innerHTML = '<div style="color:red; grid-column: 1/-1;">Lỗi kết nối Đám mây. Vui lòng tải lại trang.</div>';
+                }
+            }
+        }
+
+        function calculateMaxCups(product, inventory, otherItems = cart) {
+            const left = new Map(inventory.map(i => [i.id, Number(i.quantity)]));
+            for (const item of otherItems) {
+                if (item.id === product.id) continue;
+                for (const r of item.recipe || []) {
+                    const amt = Number(r.amount || 0);
+                    if (amt > 0) left.set(r.ingId, (left.get(r.ingId) || 0) - amt * item.quantity);
+                }
+            }
+            const recipe = new Map();
+            for (const r of product.recipe || []) {
+                const amt = Number(r.amount || 0);
+                if (amt > 0) recipe.set(r.ingId, (recipe.get(r.ingId) || 0) + amt);
+            }
+            let limit = 999;
+            for (const [id, amount] of recipe) limit = Math.min(limit, Math.floor((left.get(id) || 0) / amount));
+            return Number.isFinite(limit) ? Math.max(0, limit) : 0;
+        }
+
+        function reconcileCart() {
+            const next = [];
+            let changed = false;
+            for (const old of cart) {
+                const p = globalProducts.find(p => p.id === old.id);
+                const quantity = p ? Math.min(old.quantity,calculateMaxCups(p,globalInventory,next)) : 0;
+                if (quantity) next.push({...p,quantity});
+                if (quantity !== old.quantity) changed = true;
+            }
+            cart = next;
+            if (changed) document.getElementById('cartStockNotice').textContent = '⚠️ Một số món đã thay đổi tồn kho nên giỏ hàng được tự động cập nhật lại theo số lượng tối đa hiện có.';
+            updateCartUI();
+            if (menuRenderedOnce) updateMenuStockOnly();
+        }
+
+        // Chỉ cập nhật nhãn số lượng & nút bấm khi thêm/bớt giỏ hàng (không phá hủy DOM & không giải mã lại ảnh Base64)
+        function updateMenuStockOnly() {
+            globalProducts.forEach(p => {
+                const maxCups = calculateMaxCups(p, globalInventory);
+                const inCart = cart.find(ci => ci.id === p.id);
+                const cartQty = inCart ? inCart.quantity : 0;
+                const availableCups = maxCups - cartQty;
+                const isOut = availableCups <= 0;
+
+                const stockEl = document.getElementById(`stock-tag-${p.id}`);
+                const btnEl = document.getElementById(`btn-add-${p.id}`);
+                if (stockEl) {
+                    stockEl.className = `stock-tag ${isOut ? 'stock-out' : 'stock-available'}`;
+                    stockEl.textContent = isOut ? 'Tạm hết nguyên liệu' : `Có thể pha: ${availableCups} ly`;
+                }
+                if (btnEl) {
+                    btnEl.disabled = isOut;
+                    btnEl.textContent = isOut ? 'Tạm Hết Món' : 'Thêm Vào Giỏ';
+                }
+            });
+            renderFeaturedEventProducts();
+        }
+
+        function renderMenu(forceFullRender = false) {
+            const grid = document.getElementById('productsGrid');
+            if (!forceFullRender && menuRenderedOnce) {
+                updateMenuStockOnly();
+                return;
+            }
+            if (!globalProducts.length) {
+                grid.innerHTML = '<div style="text-align: center; color: #888; grid-column: 1/-1;">Chưa có món nào trên thực đơn.</div>';
+                menuRenderedOnce = false;
+                renderFeaturedEventProducts();
+                return;
+            }
+            grid.innerHTML = globalProducts.map(p => {
+                const maxCups = calculateMaxCups(p, globalInventory);
+                const inCart = cart.find(ci => ci.id === p.id);
+                const cartQty = inCart ? inCart.quantity : 0;
+                const availableCups = maxCups - cartQty;
+                const isOut = availableCups <= 0;
+
+                return `
+                    <div class="product-card">
+                        <div class="product-img-wrapper"><img src="${p.image}" class="product-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Me+Da+Coffee'"></div>
+                        <div class="product-info">
+                            <div class="product-name">${p.name}</div><div class="product-desc">"${p.description||''}"</div>
+                            <div class="product-price">${Number(p.price || 0).toLocaleString('vi-VN')} đ</div>
+                            <div id="stock-tag-${p.id}" class="stock-tag ${isOut ? 'stock-out' : 'stock-available'}">${isOut ? 'Tạm hết nguyên liệu' : `Có thể pha: ${availableCups} ly`}</div>
+                            <button id="btn-add-${p.id}" class="btn-add" ${isOut ? 'disabled' : ''} onclick="window.addToCart('${p.id}')">${isOut ? 'Tạm Hết Món' : 'Thêm Vào Giỏ'}</button>
+                        </div>
+                    </div>`;
+            }).join('');
+            menuRenderedOnce = true;
+            renderFeaturedEventProducts();
+        }
+
+        window.toggleCart = function() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            document.getElementById('cartOverlay').classList.toggle('active');
+        }
+
+        window.addToCart = function(productId) {
+            const product = globalProducts.find(p => p.id === productId); if (!product) return;
+            const maxCups = calculateMaxCups(product, globalInventory);
+            const existing = cart.find(item => item.id === productId);
+            const currentQty = existing ? existing.quantity : 0;
+            if (currentQty >= maxCups) {
+                alert(`Xin lỗi! Món "${product.name}" chỉ còn ${maxCups} ly khả dụng.`);
+                return;
+            }
+            if (existing) existing.quantity++; else cart.push({ ...product, quantity: 1 });
+            document.getElementById('cartStockNotice').textContent = '';
+            updateCartUI(); renderMenu(false);
+            if(!document.getElementById('cartSidebar').classList.contains('open')) window.toggleCart();
+        }
+
+        window.changeQuantity = function(productId, delta) {
+            const item = cart.find(i => i.id === productId); if (!item) return;
+            if (delta > 0) {
+                const product = globalProducts.find(p => p.id === productId);
+                const maxCups = product ? calculateMaxCups(product, globalInventory) : 0;
+                if (!Number.isInteger(delta) || item.quantity + delta > maxCups) {
+                    alert(`Xin lỗi! Món "${item.name}" chỉ còn ${maxCups} ly khả dụng.`);
+                    return;
+                }
+            }
+            item.quantity += delta; if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+            document.getElementById('cartStockNotice').textContent = '';
+            updateCartUI(); renderMenu(false);
+            if (cart.length === 0) setTimeout(window.toggleCart, 500);
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItems'); const totalEl = document.getElementById('cartTotal'); const btnCheckout = document.getElementById('btnCheckout'); const infoBox = document.getElementById('customerInfoBox');
+            document.getElementById('cartBadgeCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="empty-cart-msg">Giỏ hàng đang trống. Hãy chọn một câu chuyện nhé!</div>';
+                totalEl.textContent = '0 đ'; btnCheckout.disabled = true; infoBox.style.display = 'none';
+                document.getElementById('discountRow').style.display = 'none';
+                document.getElementById('finalTotalRow').style.display = 'none';
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const latestProduct = globalProducts.find(p => p.id === item.id) || item;
+                const maxForItem = calculateMaxCups(latestProduct, globalInventory);
+                const atLimit = item.quantity >= maxForItem;
+                const stockHint = maxForItem < 999
+                    ? `<small class="cart-item-stock-hint" style="${atLimit ? 'color:var(--red);font-weight:700;' : ''}">${atLimit ? `Đã đạt tối đa tồn kho (${maxForItem} ly)` : `Tối đa ${maxForItem} ly`}</small>`
+                    : '';
+                total += item.price * item.quantity;
+                return `<div class="cart-item">
+                    <div class="cart-item-info"><h4>${item.name}</h4><span>${item.price.toLocaleString('vi-VN')} đ</span>${stockHint}</div>
+                    <div class="cart-item-qty"><button class="btn-qty" onclick="window.changeQuantity('${item.id}', -1)">-</button><span style="font-weight:bold;">${item.quantity}</span><button class="btn-qty" ${atLimit ? 'disabled title="Đã đạt giới hạn tồn kho"' : ''} onclick="window.changeQuantity('${item.id}', 1)">+</button></div>
+                </div>`;
+            }).join('');
+            totalEl.textContent = total.toLocaleString('vi-VN') + ' đ';
+
+            const discount = calculateDiscount(total);
+            const discountRow = document.getElementById('discountRow');
+            const finalTotalRow = document.getElementById('finalTotalRow');
+
+            if (discount > 0 && appliedVoucher) {
+                const label = appliedVoucher.discountPercent > 0
+                    ? `Giảm giá (${appliedVoucher.discountPercent}%):`
+                    : `Giảm giá (voucher):`;
+                document.getElementById('discountLabel').textContent = label;
+                document.getElementById('discountAmount').textContent = '-' + discount.toLocaleString('vi-VN') + ' đ';
+                document.getElementById('finalTotal').textContent = (total - discount).toLocaleString('vi-VN') + ' đ';
+                discountRow.style.display = 'flex';
+                finalTotalRow.style.display = 'flex';
+            } else {
+                discountRow.style.display = 'none';
+                finalTotalRow.style.display = 'none';
+            }
+
+            btnCheckout.disabled = false; infoBox.style.display = 'block';
+        }
+
+        let submitting = false;
+        let lastRequest = null;
+        window.proceedToCheckout = async function() {
+            if (submitting || !cart.length) return;
+            const prevCount = cart.reduce((s, i) => s + i.quantity, 0);
+            reconcileCart();
+            if (!cart.length || cart.reduce((s, i) => s + i.quantity, 0) !== prevCount) {
+                return alert('Tồn kho vừa thay đổi, giỏ hàng đã được cập nhật lại. Vui lòng kiểm tra trước khi thanh toán!');
+            }
+            const customerName = document.getElementById('custName').value.trim();
+            if (!customerName) { document.getElementById('custName').focus(); return alert('Vui lòng nhập tên để nhận món.'); }
+            const subtotal = cart.reduce((sum,i)=>sum+i.price*i.quantity,0);
+            const data = {customerName, orderType:document.getElementById('orderType').value,
+                items:cart.map(({id,quantity})=>({id,quantity})), voucherCode:appliedVoucher?.code || '', total:subtotal-calculateDiscount(subtotal)};
+            const signature = JSON.stringify(data);
+            if (lastRequest?.signature !== signature) lastRequest = {signature,id:crypto.randomUUID()};
+            submitting = true;
+            const btn = document.getElementById('btnCheckout');
+            btn.disabled = true;
+            btn.textContent = 'Đang kiểm tra đơn…';
+            try {
+                await readyAnon();
+                const result = await remote('placeOrder',{...data,requestId:lastRequest.id});
+                location.assign('checkout.html?order='+encodeURIComponent(result.code));
+            } catch(e) {
+                submitting = false;
+                btn.disabled = false;
+                btn.textContent = 'Thanh toán qua QR';
+                alert(e.message);
+            }
+        }
+
+        let appliedVoucher = null; // { code, discountPercent, discountFixed }
+
+        window.applyVoucher = async function() {
+            const codeInput = document.getElementById('voucherCode');
+            const resultDiv = document.getElementById('voucherResult');
+            const code = (codeInput.value || '').trim().toUpperCase();
+            if (!code) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FFEBEE';
+                resultDiv.style.color = 'var(--red)';
+                resultDiv.textContent = '❌ Vui lòng nhập mã voucher!';
+                appliedVoucher = null;
+                updateCartUI();
+                return;
+            }
+            try {
+                await readyAnon();
+                const vSnap = await getDoc(doc(db, 'vouchers', code));
+                if (codeInput.value.trim().toUpperCase() !== code) return;
+                if (!vSnap.exists()) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.background = '#FFEBEE';
+                    resultDiv.style.color = 'var(--red)';
+                    resultDiv.textContent = '❌ Mã voucher không tồn tại hoặc đã hết hạn!';
+                    appliedVoucher = null;
+                    updateCartUI();
+                    return;
+                }
+                const vData = vSnap.data();
+                if (vData.active === false) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.background = '#FFEBEE';
+                    resultDiv.style.color = 'var(--red)';
+                    resultDiv.textContent = '❌ Mã voucher này đã hết hiệu lực!';
+                    appliedVoucher = null;
+                    updateCartUI();
+                    return;
+                }
+                const rawExp = vData.expiresAt ? String(vData.expiresAt).trim() : '';
+                const expMs = rawExp ? new Date(/(?:Z|[+-]\d{2}:\d{2})$/i.test(rawExp) ? rawExp : rawExp + '+07:00').getTime() : NaN;
+                if (Number.isFinite(expMs) && expMs < Date.now()) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.background = '#FFEBEE';
+                    resultDiv.style.color = 'var(--red)';
+                    resultDiv.textContent = '❌ Mã voucher này đã hết hạn sử dụng!';
+                    appliedVoucher = null;
+                    updateCartUI();
+                    return;
+                }
+                if (vData.usageLimit && vData.usedCount >= vData.usageLimit) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.background = '#FFEBEE';
+                    resultDiv.style.color = 'var(--red)';
+                    resultDiv.textContent = '❌ Mã voucher này đã hết lượt sử dụng!';
+                    appliedVoucher = null;
+                    updateCartUI();
+                    return;
+                }
+                appliedVoucher = {
+                    code: code,
+                    discountPercent: Number(vData.discountPercent || 0),
+                    discountFixed: Number(vData.discountFixed || 0),
+                    description: vData.description || ''
+                };
+                const discountText = appliedVoucher.discountPercent > 0
+                    ? `Giảm ${appliedVoucher.discountPercent}%`
+                    : `Giảm ${appliedVoucher.discountFixed.toLocaleString('vi-VN')} đ`;
+                resultDiv.style.display = 'flex';
+                resultDiv.style.justifyContent = 'space-between';
+                resultDiv.style.alignItems = 'center';
+                resultDiv.style.gap = '8px';
+                resultDiv.style.background = '#E8F5E9';
+                resultDiv.style.color = 'var(--green)';
+                resultDiv.replaceChildren();
+                const msgSpan = document.createElement('span');
+                msgSpan.textContent = `✅ Áp dụng thành công: ${discountText}${appliedVoucher.description ? ' - ' + appliedVoucher.description : ''}`;
+                const rmBtn = document.createElement('button');
+                rmBtn.type = 'button';
+                rmBtn.textContent = '✕ Gỡ';
+                rmBtn.style.cssText = 'border:none;background:transparent;color:var(--red);font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;';
+                rmBtn.onclick = () => window.removeVoucher();
+                resultDiv.append(msgSpan, rmBtn);
+                updateCartUI();
+            } catch (e) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FFEBEE';
+                resultDiv.style.color = 'var(--red)';
+                resultDiv.textContent = '❌ Lỗi kiểm tra voucher. Vui lòng thử lại!';
+                appliedVoucher = null;
+                updateCartUI();
+            }
+        };
+
+        window.removeVoucher = function() {
+            appliedVoucher = null;
+            document.getElementById('voucherCode').value = '';
+            const resultDiv = document.getElementById('voucherResult');
+            resultDiv.style.display = 'none';
+            updateCartUI();
+        };
+
+        function calculateDiscount(subtotal) {
+            if (!appliedVoucher) return 0;
+            if (appliedVoucher.discountPercent > 0) {
+                return Math.round(subtotal * appliedVoucher.discountPercent / 100);
+            }
+            if (appliedVoucher.discountFixed > 0) {
+                return Math.min(appliedVoucher.discountFixed, subtotal);
+            }
+            return 0;
+        }
+
+        document.getElementById('voucherCode').addEventListener('input', () => {
+            appliedVoucher = null;
+            document.getElementById('voucherResult').style.display='none';
+            updateCartUI();
+        });
+        await clearWorkSession();
+        loadDataFromCloud();
+    </script>
+</body>
+</html>

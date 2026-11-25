@@ -1,0 +1,92 @@
+/* =============================================
+   SHOPEE DISPLAY & SHOPEE TEXT — @font-face
+   =============================================
+   Đặt các file font (.woff2 / .woff / .ttf) vào cùng thư mục fonts/ này.
+   Tên file cần khớp với url() bên dưới.
+   
+   Nếu bạn chỉ có file .ttf, hãy đổi format('woff2') thành format('truetype')
+   và sửa phần mở rộng .woff2 thành .ttf
+   ============================================= */
+
+/* --- SHOPEE DISPLAY (Heading / Tiêu đề) --- */
+@font-face {
+    font-family: 'Shopee Display';
+    src: url('ShopeeDisplay-Light.woff2') format('woff2'),
+         url('ShopeeDisplay-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Display';
+    src: url('ShopeeDisplay-Regular.woff2') format('woff2'),
+         url('ShopeeDisplay-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Display';
+    src: url('ShopeeDisplay-Medium.woff2') format('woff2'),
+         url('ShopeeDisplay-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Display';
+    src: url('ShopeeDisplay-Bold.woff2') format('woff2'),
+         url('ShopeeDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Display';
+    src: url('ShopeeDisplay-ExtraBold.woff2') format('woff2'),
+         url('ShopeeDisplay-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Display';
+    src: url('ShopeeDisplay-Black.woff2') format('woff2'),
+         url('ShopeeDisplay-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* --- SHOPEE TEXT (Body / Nội dung) --- */
+@font-face {
+    font-family: 'Shopee Text';
+    src: url('ShopeeText-Regular.woff2') format('woff2'),
+         url('ShopeeText-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Text';
+    src: url('ShopeeText-Medium.woff2') format('woff2'),
+         url('ShopeeText-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Shopee Text';
+    src: url('ShopeeText-Bold.woff2') format('woff2'),
+         url('ShopeeText-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

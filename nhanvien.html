@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Đơn Hàng - Mê Đá</title>
+    <link href="fonts/shopee-fonts.css" rel="stylesheet">
+    <style>
+        :root { --bg-color: #FBF6EE; --card-bg: #FFFDF9; --primary: #3D2B1F; --accent: #C85A32; --border: #E8DFC8; --green: #2E7D32; --amber: #EF6C00; --zalo: #0068FF; --red: #C62828; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Shopee Text', sans-serif; background-color: var(--bg-color); color: #2B1E16; }
+        
+        header { background-color: var(--primary); color: #FAF4EB; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        header h1 { font-family: 'Shopee Display', sans-serif; font-size: 1.5rem; }
+        .btn-header { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: 600;}
+        .btn-header:hover { background: rgba(255,255,255,0.3); }
+        
+        .main-content { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .order-card { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .order-card.done { opacity: 0.6; border-style: dashed; }
+        
+        .order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--border); padding-bottom: 10px; margin-bottom: 10px; }
+        .queue-number { font-size: 1.8rem; font-weight: 900; color: var(--accent); font-family: 'Shopee Display', sans-serif; }
+        .customer-name { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+        .order-type { font-size: 0.8rem; padding: 4px 8px; border-radius: 12px; font-weight: bold; }
+        .type-dinein { background: #E8F5E9; color: var(--green); }
+        .type-takeaway { background: #FFF3E0; color: var(--amber); }
+
+        .order-items { flex-grow: 1; margin-bottom: 15px; font-size: 0.95rem; }
+        .order-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: 600; border-bottom: 1px solid #f0e6d6; padding-bottom: 4px;}
+        .order-footer { text-align: center; margin-top: auto; }
+        .btn-done { width: 100%; padding: 10px; background-color: var(--green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s;}
+        .btn-done:hover { background-color: #1b5e20; }
+        .time-text { font-size: 0.8rem; color: #888; margin-bottom: 8px; display: block; }
+
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(61, 43, 31, 0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: var(--card-bg); padding: 2.5rem; border-radius: 12px; width: 360px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.2); border: 2px solid var(--border); }
+        .login-box h2 { font-family: 'Shopee Display', sans-serif; color: var(--primary); margin-bottom: 1.5rem; }
+        .login-box input { width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit;}
+        .login-box button { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;}
+        .forgot-pass-link { display: block; text-align: right; font-size: 0.85rem; color: var(--accent); margin-top: -10px; margin-bottom: 15px; font-weight: 600; text-decoration: none; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 999; }
+        .modal-content { background: #fff; padding: 2rem; border-radius: 8px; width: 400px; max-width: 90%; }
+        .modal-header { font-family: 'Shopee Display', sans-serif; font-size: 1.2rem; color: var(--primary); margin-bottom: 1rem; text-align: left;}
+        .input-group { margin-bottom: 1rem; text-align: left; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
+        .input-group input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; }
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; color: white; font-size: 0.85rem;}
+        .btn-accent { background: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <!-- Đăng nhập Nhân Viên (ẩn tạm trong lúc kiểm tra phiên Admin/Staff) -->
+    <div id="loginOverlay" style="display: none;">
+        <div class="login-box">
+            <h2>Đăng Nhập</h2>
+            <input type="text" id="staffUser" value="nhanvien" readonly>
+            <input type="password" id="staffPass" placeholder="Mật khẩu" onkeydown="if(event.key==='Enter') window.loginStaff()">
+            <button id="staffLoginBtn" onclick="window.loginStaff()">Vào Trang Bếp</button>
+            <a href="index.html" style="display: block; margin-top: 15px; font-size: 0.85rem; color: #7A6B62;">⬅ Quay về trang đặt món</a>
+        </div>
+    </div>
+
+    <div id="staffWorkspace" hidden>
+    <header>
+        <h1>👨‍🍳 Quầy Pha Chế <span style="font-size: 0.8rem; background: var(--green); padding: 2px 6px; border-radius: 8px;">LIVE</span></h1>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn-header" style="background: var(--red); border-color: var(--red);" onclick="window.staffPushZaloAlert()">⚠️ Báo Hết NL / Chốt Ca Về Zalo</button>
+            <a href="index.html" class="btn-header" style="background: var(--zalo); border-color: var(--zalo);">🛒 Trang Đặt Hàng</a>
+            <button class="btn-header" onclick="window.logoutStaff()">Đăng Xuất</button>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 1rem; color: var(--primary); font-family: 'Shopee Display', sans-serif;">Đơn Hàng Chờ Xử Lý (<span id="pendingCountBadge">0</span>)</h2>
+        <div id="pendingOrdersContainer" class="orders-grid"></div>
+
+        <h2 style="margin-top: 3rem; margin-bottom: 1rem; color: #7A6B62; font-family: 'Shopee Display', sans-serif;">Đơn Hàng Đã Pha Xong (50 đơn gần nhất)</h2>
+        <div id="completedOrdersContainer" class="orders-grid"></div>
+    </div>
+
+    </div>
+    <!-- TÍCH HỢP FIREBASE REALTIME & NÚT BÁO ZALO NHANH TỪ BẾP -->
+    <script type="module">
+        import {
+            db,
+            role, remote,
+            loginStaff as medaLogin,
+            logoutAdmin as medaLogout,
+            callFn,
+            textForHtml, getOrderTimeMs,
+            getOrderDateKeyVN,
+            fmtDateVN,
+            ensureOrderZaloNotified
+        } from "./assets/meda.js";
+        import { collection, query, onSnapshot, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+        let ordersUnsubscribe = null;
+        let cachedOrdersList = [];
+        const ordersMap = new Map();
+
+        // Giải phóng listener khi rời trang để tránh rò rỉ bộ nhớ
+        window.addEventListener('beforeunload', () => {
+            if (ordersUnsubscribe) {
+                ordersUnsubscribe();
+                ordersUnsubscribe = null;
+            }
+        });
+
+        // Đăng nhập nhân viên (Admin đi từ admin.html vào thẳng không cần đăng nhập lại)
+        (async function bootStaff() {
+            try {
+                const u = await role();
+                if (u === 'admin' || u === 'staff') {
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    document.getElementById('staffWorkspace').hidden = false;
+                    startListeningOrders();
+                    return;
+                }
+            } catch (e) { /* chưa đăng nhập */ }
+            document.getElementById('loginOverlay').style.display = 'flex';
+        })();
+
+        window.loginStaff = async function() {
+            const btn = document.getElementById('staffLoginBtn');
+            if (btn && btn.disabled) return;
+            const pass = document.getElementById('staffPass').value;
+            if (!pass) return alert("Vui lòng nhập mật khẩu!");
+            if (btn) { btn.disabled = true; btn.textContent = 'Đang đăng nhập…'; }
+            try {
+                await medaLogin(pass);
+                document.getElementById('staffPass').value = '';
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('staffWorkspace').hidden = false;
+                startListeningOrders();
+            } catch (e) {
+                alert((e && e.message) ? e.message : "Sai tài khoản hoặc mật khẩu!");
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Vào Trang Bếp'; }
+            }
+        }
+
+        window.logoutStaff = function() {
+            if (ordersUnsubscribe) {
+                ordersUnsubscribe();
+                ordersUnsubscribe = null;
+            }
+            medaLogout();
+        }
+        function renderOrderCard(order) {
+            const dbId = order.id;
+            const isDone = order.status === 'Hoàn thành';
+            const typeClass = order.orderType === 'Tại chỗ' ? 'type-dinein' : 'type-takeaway';
+
+            let itemsHtml = '';
+            if (order.items && Array.isArray(order.items)) {
+                itemsHtml = order.items.map(item =>
+                    `<div class="order-item"><span>${item.name}</span> <span style="color:var(--accent);">x${item.quantity}</span></div>`
+                ).join('');
+            }
+
+            return `
+                <div class="order-card ${isDone ? 'done' : ''}">
+                    <div class="order-header">
+                        <div><span class="customer-name">👤 ${textForHtml(order.customerName || 'Khách hàng')}</span><br><span class="order-type ${typeClass}">${order.orderType || 'Mang về'}</span></div>
+                        <div class="queue-number">#${order.queueNumber || ''}</div>
+                    </div>
+                    <div class="order-items">${itemsHtml}</div>
+                    <div class="order-footer">
+                        <span class="time-text">🕒 Đặt lúc: ${order.createdAt || 'Vừa xong'}</span>
+                        ${!isDone ? `<button class="btn-done" onclick="window.markAsDone('${dbId}')">✔ Đã Pha Chế Xong</button>` : `<strong style="color: var(--green);">Đã Gọi Khách</strong>`}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOrdersView() {
+            const pendingContainer = document.getElementById('pendingOrdersContainer');
+            const completedContainer = document.getElementById('completedOrdersContainer');
+            const ordersList = Array.from(ordersMap.values());
+
+            // Chuẩn hóa sắp xếp mới nhất lên đầu bằng getOrderTimeMs (hỗ trợ cả Timestamp, Number ms, createdAt VN và id ord_<ms>)
+            ordersList.sort((a, b) => getOrderTimeMs(b) - getOrderTimeMs(a));
+            cachedOrdersList = ordersList;
+
+            const pendingOrders = [];
+            const completedOrders = [];
+            for (const order of ordersList) {
+                if (order.status === 'Hoàn thành') {
+                    if (completedOrders.length < 50) completedOrders.push(order);
+                } else {
+                    pendingOrders.push(order);
+                }
+            }
+
+            const badgeEl = document.getElementById('pendingCountBadge');
+            if (badgeEl) badgeEl.textContent = pendingOrders.length;
+
+            if (pendingContainer) {
+                pendingContainer.innerHTML = pendingOrders.length
+                    ? pendingOrders.map(renderOrderCard).join('')
+                    : '<p style="color:#888; font-style:italic;">Tuyệt vời! Hiện không có đơn hàng nào đang chờ.</p>';
+            }
+
+            if (completedContainer) {
+                completedContainer.innerHTML = completedOrders.length
+                    ? completedOrders.map(renderOrderCard).join('')
+                    : '<p style="color:#888; font-style:italic;">Chưa có đơn nào hoàn thành.</p>';
+            }
+        }
+
+        function startListeningOrders() {
+            if (ordersUnsubscribe) {
+                ordersUnsubscribe();
+                ordersUnsubscribe = null;
+            }
+            ordersMap.clear();
+            let isFirstSnapshot = true;
+
+            const q = query(collection(db, "orders"));
+            ordersUnsubscribe = onSnapshot(q, (snapshot) => {
+                const newlyAddedOrders = [];
+
+                snapshot.docChanges().forEach(change => {
+                    const docId = change.doc.id;
+                    if (change.type === 'removed' || change.doc.get('requiresReconciliation') || (change.doc.get('payment_status') && change.doc.get('payment_status') !== 'PAID')) {
+                        ordersMap.delete(docId);
+                    } else {
+                        const orderObj = { id: docId, ...change.doc.data() };
+                        ordersMap.set(docId, orderObj);
+                        if ((change.type === 'added' || change.type === 'modified') && (!orderObj.payment_status || orderObj.payment_status === 'PAID') && orderObj.status !== 'Hoàn thành' && orderObj.zaloNotified === false) {
+                            newlyAddedOrders.push(orderObj);
+                        }
+                    }
+                });
+
+                renderOrdersView();
+
+                // Relay dự phòng: nếu đơn mới vừa vào mà chưa gửi Zalo (ví dụ khách đóng tab sớm), Quầy Bếp tự động gửi bù
+                if (!isFirstSnapshot && newlyAddedOrders.length > 0) {
+                    newlyAddedOrders.forEach(ord => {
+                        ensureOrderZaloNotified(ord, cachedOrdersList);
+                    });
+                }
+                isFirstSnapshot = false;
+            });
+        }
+
+        window.markAsDone = async function(dbId) {
+            const existing = ordersMap.get(dbId);
+            const prevStatus = existing ? existing.status : null;
+            // Optimistic UI update: chuyển trạng thái ngay lập tức (0ms delay)
+            if (existing) {
+                existing.status = "Hoàn thành";
+                renderOrdersView();
+            }
+            try {
+                await updateDoc(doc(db, "orders", dbId), { status: "Hoàn thành" });
+            } catch(e) {
+                if (existing && prevStatus) {
+                    existing.status = prevStatus;
+                    renderOrdersView();
+                }
+                alert("Lỗi khi cập nhật trạng thái đơn!");
+            }
+        }
+
+        // Nút cho nhân viên bếp đẩy nhanh báo cáo Hết nguyên liệu / Hết món / Doanh thu ca về Zalo chủ quán
+        window.staffPushZaloAlert = async function() {
+            try {
+                await Promise.all([remote('zaloPushStock'),remote('zaloPushReport')]);
+                alert('Đã gửi báo cáo ca làm việc.');
+            } catch (e) { alert(e.message); }
+        }
+    </script>
+</body>
+</html>

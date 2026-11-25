@@ -1,0 +1,47 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "HUONG-DAN-DEPLOY.md",
+      "zalo-247-google-apps-script.gs",
+      "**/.*",
+      "**/node_modules/**",
+      "functions/**",
+      "tests/**",
+      "**/*-debug.log",
+      "THANH-TOAN-SEPAY.md",
+      "HUONG-DAN-CAI-DAT.md",
+      "sepay-webhook-apps-script.gs"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/sepay-webhook",
+        "function": {
+          "functionId": "sepayWebhook",
+          "region": "asia-southeast1"
+        }
+      },
+      {
+        "source": "/api/order-status",
+        "function": {
+          "functionId": "orderStatus",
+          "region": "asia-southeast1"
+        }
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions"
+  }
+}

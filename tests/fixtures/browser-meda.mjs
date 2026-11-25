@@ -1,0 +1,15 @@
+export const db = {}, auth = { currentUser: { uid: 'test-admin' } };
+export const role = async () => 'admin';
+export const readyAdmin = async () => ({ uid: auth.currentUser.uid, admin: true });
+export const clearWorkSession = async () => {};
+export const loginAdmin = async () => {};
+export const logoutAdmin = async () => {};
+export const changeAdminPassword = async () => {};
+export const remote = async () => ({});
+export const callFn = async () => ({ enableAuto: false, zaloCodeHash: 'test-only' });
+export const textForHtml = value => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+export const fmtDateVN = (date = new Date()) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Ho_Chi_Minh' }).format(date);
+export const fmtDateTimeVN = (date = new Date()) => new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'medium' }).format(date);
+export const getOrderTimeMs = order => order.createdAtMs || 0;
+export const getOrderDateKeyVN = order => order.dateKey || '';
+export const ensureOrderZaloNotified = async () => {};

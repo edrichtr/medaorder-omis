@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Tương thích gói Firebase Spark miễn phí (client + Google Apps Script Webhook).
+    // Nếu nâng cấp gói Blaze và dùng Cloud Functions Custom Token, hãy siết lại quyền admin/staff.
+    match /inventoryReceipts/{receiptId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.id == receiptId
+        && request.resource.data.status == 'posted'
+        && request.resource.data.createdByUid == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.session is string
+        && request.resource.data.session.size() > 0
+        && request.resource.data.operator is string
+        && request.resource.data.operator.size() > 0
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 100
+        && request.resource.data.totalCost is int
+        && request.resource.data.totalCost >= 0;
+      allow update, delete: if false;
+    }
+    // The legacy Spark collections keep their existing permissions. Do not let
+    // the catch-all override the immutable receipt rule above (allows are ORed).
+    match /{collectionName}/{document=**} {
+      allow read, write: if collectionName != 'inventoryReceipts';
+    }
+  }
+}

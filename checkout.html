@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán Đơn Hàng - Mê Đá</title>
+    <link href="logo.jpg" rel="icon" type="image/x-icon">
+    <link href="fonts/shopee-fonts.css" rel="stylesheet">
+    <style>
+        :root { --bg-color: #FBF6EE; --card-bg: #FFFDF9; --primary: #3D2B1F; --accent: #C85A32; --border: #E8DFC8; --green: #2E7D32; --muted: #7A6B62; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Shopee Text', sans-serif; background-color: var(--bg-color); color: #2B1E16; padding: 1.5rem 1rem 3rem; margin: 0; }
+        .checkout-card { max-width: 540px; margin: 0 auto; background: var(--card-bg); border: 2px solid var(--border); border-radius: 16px; padding: 1.75rem; box-shadow: 0 10px 25px rgba(61,43,31,0.08); text-align: center; }
+        h2 { font-family: 'Shopee Display', sans-serif; color: var(--primary); margin: 0 0 0.5rem; }
+        .status-banner { padding: 10px 14px; border-radius: 10px; background: #FFF8E1; color: #8D5A00; font-weight: 600; font-size: 0.92rem; margin: 0.75rem 0 1.25rem; }
+        .status-banner.paid { background: #E8F5E9; color: var(--green); }
+        .status-banner.expired { background: #FFEBEE; color: #C62828; }
+        .qr-container { background: #fff; padding: 0.9rem; border-radius: 12px; display: inline-block; border: 1px solid var(--border); margin-bottom: 1rem; }
+        .qr-image { width: 250px; max-width: 100%; height: auto; display: block; border-radius: 8px; }
+        .payment-info { background-color: #FAF5ED; border-radius: 10px; padding: 0.9rem 1rem; text-align: left; margin-bottom: 1rem; font-size: 0.92rem; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; }
+        .order-items-box { background: #FFFDF9; border: 1px dashed var(--border); border-radius: 8px; padding: 0.65rem 0.85rem; margin: 0.75rem 0 1rem; font-size: 0.88rem; text-align: left; }
+        .order-item-line { display: flex; justify-content: space-between; padding: 3px 0; color: var(--primary); }
+        .copy-btn { border: 1px solid var(--border); background: #fff; color: var(--primary); border-radius: 6px; padding: 3px 9px; font-size: 0.76rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+        .copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .bank-apps-section { text-align: left; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
+        .bank-apps-section h3 { font-size: 0.92rem; color: var(--primary); margin: 0 0 0.6rem; }
+        .bank-search { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.86rem; margin-bottom: 0.75rem; }
+        .bank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-height: 240px; overflow-y: auto; }
+        .bank-chip { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 4px; background: #fff; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; color: var(--primary); font-size: 0.72rem; font-weight: 600; text-align: center; transition: 0.18s; }
+        .bank-chip:hover { border-color: var(--accent); background: #FDF4EF; transform: translateY(-1px); }
+        .bank-chip img { width: 38px; height: 38px; border-radius: 8px; object-fit: contain; }
+        .fallback-row { display: flex; gap: 8px; align-items: center; margin-top: 0.75rem; }
+        .fallback-row select { flex: 1; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; }
+        .bank-link { display: inline-block; background: var(--green); color: white; padding: 10px 14px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
+        .back-link { display: inline-block; margin-top: 1.25rem; color: var(--muted); font-size: 0.9rem; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <main class="checkout-card">
+        <h2>Thanh Toán Đơn Hàng</h2>
+        <div id="state" class="status-banner" role="status">⏳ Đang tải thông tin thanh toán…</div>
+
+        <section id="details" hidden>
+            <div style="font-size:0.88rem; color:var(--muted);">Mã đơn: <strong id="orderCode" style="color:var(--accent); font-size:1rem;"></strong></div>
+            <div id="items" class="order-items-box"></div>
+            <div class="payment-info">
+                <div class="info-row"><span>Tạm tính</span><strong id="subtotal"></strong></div>
+                <div class="info-row"><span>Giảm giá</span><strong id="discount" style="color:var(--green);"></strong></div>
+                <div class="info-row"><span>Thành tiền</span><strong id="total" style="color:var(--accent); font-size:1.05rem;"></strong></div>
+                <div class="info-row"><span>Đã nhận</span><strong id="received"></strong></div>
+            </div>
+
+            <section id="transfer" hidden>
+                <div class="qr-container">
+                    <img id="qr" class="qr-image" alt="Mã VietQR thanh toán phần tiền còn lại">
+                </div>
+                <div class="payment-info">
+                    <div class="info-row"><span>Ngân hàng</span><strong>VietinBank</strong></div>
+                    <div class="info-row">
+                        <span>Số tài khoản</span>
+                        <span><strong>105883045437</strong> <button type="button" class="copy-btn" data-copy="105883045437">Copy</button></span>
+                    </div>
+                    <div class="info-row">
+                        <span>Nội dung CK</span>
+                        <span><strong id="memo" style="color:var(--accent);"></strong> <button type="button" class="copy-btn" id="copyMemoBtn">Copy</button></span>
+                    </div>
+                    <div class="info-row"><span>Số tiền cần chuyển</span><strong id="remaining" style="color:var(--accent);"></strong></div>
+                </div>
+
+                <div class="bank-apps-section">
+                    <h3>📱 Chạm ngân hàng bạn dùng để mở thẳng App (tự điền tiền &amp; nội dung):</h3>
+                    <input type="text" id="bankSearch" class="bank-search" placeholder="🔍 Tìm nhanh tên ngân hàng (VD: Vietcombank, MB, Techcombank...)">
+                    <div id="bankGrid" class="bank-grid"></div>
+
+                    <div class="fallback-row">
+                        <select id="app" aria-label="Chọn ứng dụng ngân hàng">
+                            <option value="icb">VietinBank iPay</option>
+                            <option value="vcb">VCB Digibank</option>
+                            <option value="mb">MB Bank</option>
+                            <option value="tcb">Techcombank Mobile</option>
+                            <option value="bidv">BIDV SmartBanking</option>
+                            <option value="acb">ACB ONE</option>
+                            <option value="vpb">VPBank NEO</option>
+                            <option value="tpb">TPBank Mobile</option>
+                        </select>
+                        <a id="openBank" class="bank-link">Mở App Ngân Hàng ↗</a>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <a href="index.html" class="back-link">⬅ Về trang đặt món</a>
+    </main>
+
+    <script type="module">
+        import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+        import { db, ready } from "./assets/meda.js";
+
+        const $ = id => document.getElementById(id);
+        const money = n => Number(n || 0).toLocaleString('vi-VN') + ' đ';
+        const code = new URLSearchParams(location.search).get('order');
+        const BANK_ACCOUNT = '105883045437';
+        const BANK_CODE = 'ICB';
+
+        let remaining = 0;
+        let timer = null;
+        let bankApps = [];
+
+        function buildDeeplink(appId) {
+            const params = new URLSearchParams({
+                app: appId,
+                ba: `${BANK_ACCOUNT}@icb`,
+                am: String(remaining),
+                tn: `SEVQR ${code}`,
+                url: location.href
+            });
+            return 'https://dl.vietqr.io/pay?' + params;
+        }
+
+        function updateDropdownLink() {
+            $('openBank').href = buildDeeplink($('app').value);
+        }
+        $('app').addEventListener('change', updateDropdownLink);
+
+        function renderBankGrid(keyword = '') {
+            const grid = $('bankGrid');
+            const kw = keyword.trim().toLowerCase();
+            const list = kw
+                ? bankApps.filter(a => `${a.appName} ${a.bankName} ${a.appId}`.toLowerCase().includes(kw))
+                : bankApps.slice(0, 12);
+
+            if (!list.length) {
+                grid.innerHTML = '<div style="grid-column:1/-1; color:#888; font-size:0.82rem; padding:8px 0;">Không tìm thấy ngân hàng khớp — hãy chọn ở danh sách bên dưới.</div>';
+                return;
+            }
+            grid.replaceChildren(...list.map(app => {
+                const a = document.createElement('a');
+                a.className = 'bank-chip';
+                a.href = buildDeeplink(app.appId);
+                const img = document.createElement('img');
+                img.src = app.appLogo;
+                img.alt = app.appName;
+                img.loading = 'lazy';
+                const label = document.createElement('span');
+                label.textContent = app.appName;
+                a.append(img, label);
+                return a;
+            }));
+        }
+
+        $('bankSearch').addEventListener('input', e => renderBankGrid(e.target.value));
+
+        async function loadBankDeeplinks() {
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+            const url = isIOS
+                ? 'https://api.vietqr.io/v2/ios-app-deeplinks'
+                : 'https://api.vietqr.io/v2/android-app-deeplinks';
+            try {
+                const res = await fetch(url);
+                const json = await res.json();
+                bankApps = Array.isArray(json.apps) ? json.apps : [];
+                renderBankGrid($('bankSearch').value);
+            } catch (_) {
+                $('bankGrid').style.display = 'none';
+                $('bankSearch').style.display = 'none';
+            }
+        }
+
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('[data-copy]');
+            if (!btn) return;
+            navigator.clipboard.writeText(btn.dataset.copy).then(() => {
+                const old = btn.textContent;
+                btn.textContent = 'Đã copy';
+                setTimeout(() => { btn.textContent = old; }, 1500);
+            }).catch(() => {});
+        });
+
+        function show(order) {
+            clearTimeout(timer);
+            $('details').hidden = false;
+            $('orderCode').textContent = code;
+            $('items').replaceChildren(...(order.items || []).map(item => {
+                const row = document.createElement('div');
+                row.className = 'order-item-line';
+                const left = document.createElement('span');
+                left.textContent = `${item.name} × ${item.quantity}`;
+                const right = document.createElement('strong');
+                right.textContent = money(item.price * item.quantity);
+                row.append(left, right);
+                return row;
+            }));
+            $('subtotal').textContent = money(order.subtotal);
+            $('discount').textContent = (order.voucherCode ? order.voucherCode + ' · -' : '-') + money(order.discountAmount);
+            $('total').textContent = money(order.total);
+            $('received').textContent = money(order.received);
+
+            remaining = Math.max(0, Number(order.total || 0) - Number(order.received || 0));
+            const expired = order.expired || (!order.received && order.payment_status !== 'PAID' && Date.now() >= order.expiresAtMs);
+            $('transfer').hidden = expired || order.payment_status === 'PAID';
+
+            const stateEl = $('state');
+            stateEl.className = 'status-banner';
+
+            if (expired) {
+                stateEl.classList.add('expired');
+                stateEl.textContent = order.received
+                    ? '⚠️ Đã nhận tiền sau khi đơn hết hạn. Vui lòng liên hệ quầy để đối soát.'
+                    : '⏰ Đơn hàng đã hết thời gian giữ hàng.';
+                return;
+            }
+            if (order.payment_status === 'PAID') {
+                stateEl.classList.add('paid');
+                stateEl.textContent = `✅ Đã thanh toán thành công! Số thứ tự nhận món của bạn là #${order.queueNumber}.`;
+                return;
+            }
+
+            stateEl.textContent = order.received
+                ? '⚠️ Đã nhận một phần tiền. Vui lòng chuyển nốt phần còn lại bên dưới.'
+                : '⏳ Đang chờ chuyển khoản. Màn hình sẽ tự động xác nhận ngay khi tiền về.';
+
+            const memoText = `SEVQR ${code}`;
+            $('remaining').textContent = money(remaining);
+            $('memo').textContent = memoText;
+            $('copyMemoBtn').dataset.copy = memoText;
+            $('qr').src = `https://qr.sepay.vn/img?acc=${BANK_ACCOUNT}&bank=${BANK_CODE}&amount=${remaining}&des=${encodeURIComponent(memoText)}&template=compact`;
+
+            updateDropdownLink();
+            if (bankApps.length) renderBankGrid($('bankSearch').value);
+            if (!order.received) timer = setTimeout(() => show(order), Math.max(0, order.expiresAtMs - Date.now()));
+        }
+
+        try {
+            if (!/^DH\d{4,8}$/.test(code || '')) throw Error('Hãy mở trang thanh toán từ giỏ hàng.');
+            loadBankDeeplinks();
+            await ready();
+            onSnapshot(doc(db, 'orders', code), snap => {
+                if (snap.exists()) show(snap.data());
+                else $('state').textContent = 'Không tìm thấy đơn hàng.';
+            }, () => {
+                $('transfer').hidden = true;
+                $('state').textContent = 'Không thể đọc trạng thái đơn. Vui lòng mở lại trong cùng phiên đặt hàng.';
+            });
+        } catch (e) {
+            $('state').textContent = e.message;
+        }
+    </script>
+</body>
+</html>
